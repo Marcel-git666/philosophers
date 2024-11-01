@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:36:21 by mmravec           #+#    #+#             */
-/*   Updated: 2024/10/31 15:54:05 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/11/01 13:16:26 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,11 @@ int	main(int argc, char **argv)
 	void			*args[2];
 	pthread_t *philosophers;
 	int		i;
-	t_philo_params params;
+	t_philo_params	params;
+	pthread_mutex_t	*forks;
 
 	mails = 0;
+	forks = ft_calloc(params.number_of_philosophers, sizeof(pthread_mutex_t));
 	args[0] = &mutex;
 	args[1] = &mails;
 	if (argc == 5 || argc == 6)

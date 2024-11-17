@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2024/11/01 13:15:32 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/11/17 21:48:25 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,23 +37,20 @@ int	ft_atoi(const char *str)
 	return (result * positive);
 }
 
-void	*ft_calloc(size_t count, size_t size)
+size_t	ft_strlen(const char *s)
 {
-	unsigned char	*ptr;
-	size_t			total_size;
-	size_t			i;
+	size_t	len;
 
-	if (size != 0 && count > SIZE_MAX / size)
-		return (NULL);
-	total_size = count * size;
-	ptr = malloc(total_size);
-	if (!ptr)
-		return (NULL);
-	i = 0;
-	while (i < total_size)
-	{
-		ptr[i] = 0;
-		i++;
-	}
-	return ((void *)ptr);
+	len = 0;
+	while (s[len] != '\0')
+		len++;
+	return (len);
+}
+
+void	error_exit(const char *error)
+{
+	write(2, "Error\n", 6);
+	write(2, error, ft_strlen(error));
+	write(2, "\n", 1);
+	exit(EXIT_FAILURE);
 }

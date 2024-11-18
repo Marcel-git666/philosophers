@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:55:05 by mmravec           #+#    #+#             */
-/*   Updated: 2024/11/17 21:58:07 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/11/18 07:57:53 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
 	t_opcode opcode)
 {
 	if (opcode == CREATE)
-		handle_pthread_error(pthread_create(thread, null, f, data), opcode);
+		handle_pthread_error(pthread_create(thread, NULL, f, data), opcode);
 	else if (opcode == JOIN)
 		handle_pthread_error(pthread_join(thread, NULL), opcode);
 	else if (opcode == DETACH)

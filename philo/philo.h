@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/11/18 07:59:42 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/11/19 16:37:51 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <pthread.h>
 # include <sys/time.h>
 # include <errno.h>
+# include <stdio.h>
 
 typedef struct s_table	t_table;
 
@@ -49,6 +50,8 @@ struct s_table
 	int		nbr_limit_meals;
 	long	start_time;
 	int		is_finished;
+	int		are_threads_ready;
+	t_mtx	table_mutex;
 	t_fork	*forks;
 	t_philo	*philos;
 };
@@ -65,12 +68,16 @@ typedef enum e_opcode
 }		t_opcode;
 
 int		ft_atoi(const char *str);
-void	*ft_calloc(size_t count, size_t size);
+
 void	parse_input(t_table *table, char **argv);
 void	init_data(t_table *table);
 void	error_exit(const char *error);
+void	*safe_malloc(size_t bytes);
 void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
 			t_opcode opcode);
 void	safe_mutex_handle(t_mtx *mutex, t_opcode opcode);
+void	init_data(t_table *table);
+void	make_dinner(t_table *table);
+
 
 #endif

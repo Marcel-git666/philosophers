@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:55:05 by mmravec           #+#    #+#             */
-/*   Updated: 2024/11/18 07:57:53 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/11/18 17:06:25 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,9 @@ void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
 	if (opcode == CREATE)
 		handle_pthread_error(pthread_create(thread, NULL, f, data), opcode);
 	else if (opcode == JOIN)
-		handle_pthread_error(pthread_join(thread, NULL), opcode);
+		handle_pthread_error(pthread_join(*thread, NULL), opcode);
 	else if (opcode == DETACH)
-		handle_pthread_error(pthread_detach(thread), opcode);
+		handle_pthread_error(pthread_detach(*thread), opcode);
 	else
 		error_exit("Wrong opcode, use CREATE, JOIN or DETACH");
 

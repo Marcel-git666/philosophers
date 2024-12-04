@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/04 13:14:23 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/04 16:37:19 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <stdio.h>
 # include <stdbool.h>
 
+# define DEBUG_MODE 1
+
 typedef struct s_table	t_table;
 
 typedef pthread_mutex_t	t_mtx;
@@ -32,30 +34,33 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
-	int			id;
+	long		id;
 	int			meals_counter;
-	int			is_full;
+	bool		is_full;
 	long		last_meal_time;
 	t_fork		*left_fork;
 	t_fork		*right_fork;
 	pthread_t	thread_id;
+	t_mtx		philo_mutex;
 	t_table		*table;
 }		t_philo;
 
 struct s_table
 {
-	int		nbr_philo;
-	int		time_to_die;
-	int		time_to_eat;
-	int		time_to_sleep;
-	int		nbr_limit_meals;
-	long	start_time;
-	int		is_finished;
-	int		are_threads_ready;
-	t_mtx	table_mutex;
-	t_mtx	write_mutex;
-	t_fork	*forks;
-	t_philo	*philos;
+	long		nbr_philo;
+	long		time_to_die;
+	long		time_to_eat;
+	long		time_to_sleep;
+	long		nbr_limit_meals;
+	long		start_time;
+	bool		is_finished;
+	bool		are_threads_ready;
+	long		threads_running_nbr;
+	pthread_t	monitor;
+	t_mtx		table_mutex;
+	t_mtx		write_mutex;
+	t_fork		*forks;
+	t_philo		*philos;
 };
 
 typedef enum e_opcode
@@ -78,16 +83,16 @@ typedef enum e_time_code
 
 typedef enum e_status
 {
-	EAT,
-	SLEEP,
-	THINK,
+	EATING,
+	SLEEPING,
+	THINKING,
 	TAKE_LEFT_FORK,
 	TAKE_RIGHT_FORK,
 	DIED
 }	t_philo_status;
 
 int		ft_atoi(const char *str);
-
+int		ft_printf(const char *format, ...);
 void	parse_input(t_table *table, char **argv);
 void	init_data(t_table *table);
 void	error_exit(const char *error);
@@ -97,7 +102,7 @@ void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
 			t_opcode opcode);
 void	safe_mutex_handle(t_mtx *mutex, t_opcode opcode);
 void	init_data(t_table *table);
-void	make_dinner(t_table *table);
+void	dinner_start(t_table *table);
 void	wait_all_threads(t_table *table);
 void	precise_usleep(long usec, t_table *table);
 void	set_bool(t_mtx *mutex, bool *dest, bool value);
@@ -105,5 +110,8 @@ bool	get_bool(t_mtx *mutex, bool *value);
 void	set_long(t_mtx *mutex, long *dest, long value);
 long	get_long(t_mtx *mutex, long *value);
 bool	simulation_finished(t_table *table);
+void	write_status(t_philo_status status, t_philo *philo, bool debug);
+void	*monitor_dinner(void *data);
+void	increase_long(t_mtx *mutex, long *value);
 
 #endif

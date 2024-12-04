@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   synchro_utils.c                                    :+:      :+:    :+:   */
+/*   ft_printf.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/04 13:10:39 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/04 16:41:34 by mmravec          ###   ########.fr       */
+/*   Created: 2024/09/19 13:28:20 by mmravec           #+#    #+#             */
+/*   Updated: 2024/09/26 12:23:21 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#ifndef FT_PRINTF_H
+# define FT_PRINTF_H
 
-void	wait_all_threads(t_table *table)
-{
-	while (!get_bool(&table->table_mutex, &table->are_threads_ready))
-		;
-}
+# include <unistd.h>
+# include <stdlib.h>
+# include <stdarg.h>
 
-void all_threads_are_running(void)
-{
+int	ft_printf(const char *format, ...);
+int	print_format(char conversion, va_list *ap);
+int	print_char(int c);
+int	print_string(char *s);
+int	print_digit(long n, int base, char *symbols);
+int	print_unsigned_digit(unsigned long long n, int base, char *symbols);
+int	print_pointer(void *p);
 
-}
-
-void	increase_long(t_mtx *mutex, long *value)
-{
-	safe_mutex_handle(mutex, LOCK);
-	(*value)++;
-	safe_mutex_handle(mutex, UNLOCK);
-}
+#endif

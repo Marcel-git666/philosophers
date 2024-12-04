@@ -1,38 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/31 13:36:21 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/04 15:54:45 by mmravec          ###   ########.fr       */
+/*   Created: 2024/12/04 16:23:55 by mmravec           #+#    #+#             */
+/*   Updated: 2024/12/04 16:30:21 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <stdio.h>
 
-void	*routine()
+
+void	*monitor_dinner(void *data)
 {
+	t_table	*table;
 
-	return NULL;
-}
-
-// int argc, char **argv
-int	main(int argc, char **argv)
-{
-	t_table	table;
-
-	if (argc == 5 || argc == 6)
-	{
-		parse_input(&table, argv);
-		if (table.nbr_philo > 200)
-			error_exit("Too many philosophers (200 is max)");
-		init_data(&table);
-		dinner_start(&table);
-	}
-	else
-		error_exit("Wrong number of arguments. ./philo 5 100 50 20 [7]");
-	return (0);
+	table = (t_table *)data;
+	while (!all_threads_are_running())
+		;
+	return (NULL);
 }

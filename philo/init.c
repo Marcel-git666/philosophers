@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:50:14 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/04 12:40:11 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/04 20:58:42 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,16 @@
 
 static void	assign_forks(t_philo *philo, t_fork *forks, int pos)
 {
+	int		philo_nbr;
+
+	philo_nbr = philo->table->nbr_philo;
+	philo->left_fork = &forks[(pos + 1) % philo_nbr];
 	philo->right_fork = &forks[pos];
-	philo->left_fork = &forks[(pos + 1) % philo->table->nbr_philo];
+	if (philo->id % 2 == 0)
+	{
+		philo->left_fork = &forks[pos];
+		philo->right_fork = &forks[(pos + 1) % philo_nbr];
+	}
 }
 
 static void	init_philo(t_table *table)
@@ -31,9 +39,9 @@ static void	init_philo(t_table *table)
 		philo->is_full = 0;
 		philo->meals_counter = 0;
 		philo->table = table;
+		safe_mutex_handle(&philo->philo_mutex, INIT);
 		assign_forks(philo, table->forks, i);
 	}
-
 }
 
 void	init_data(t_table *table)
@@ -43,6 +51,7 @@ void	init_data(t_table *table)
 	i = 0;
 	table->is_finished = 0;
 	table->are_threads_ready = 0;
+	table->threads_running_nbr = 0;
 	table->philos = safe_malloc(table->nbr_philo * sizeof(t_philo));
 	table->forks = safe_malloc(table->nbr_philo * sizeof(t_fork));
 	safe_mutex_handle(&table->table_mutex, INIT);

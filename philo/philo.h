@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/04 12:10:11 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/04 13:14:23 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <sys/time.h>
 # include <errno.h>
 # include <stdio.h>
+# include <stdbool.h>
 
 typedef struct s_table	t_table;
 
@@ -52,6 +53,7 @@ struct s_table
 	int		is_finished;
 	int		are_threads_ready;
 	t_mtx	table_mutex;
+	t_mtx	write_mutex;
 	t_fork	*forks;
 	t_philo	*philos;
 };
@@ -74,6 +76,16 @@ typedef enum e_time_code
 	MICROSECONDS
 }	t_time_code;
 
+typedef enum e_status
+{
+	EAT,
+	SLEEP,
+	THINK,
+	TAKE_LEFT_FORK,
+	TAKE_RIGHT_FORK,
+	DIED
+}	t_philo_status;
+
 int		ft_atoi(const char *str);
 
 void	parse_input(t_table *table, char **argv);
@@ -86,6 +98,12 @@ void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
 void	safe_mutex_handle(t_mtx *mutex, t_opcode opcode);
 void	init_data(t_table *table);
 void	make_dinner(t_table *table);
+void	wait_all_threads(t_table *table);
 void	precise_usleep(long usec, t_table *table);
+void	set_bool(t_mtx *mutex, bool *dest, bool value);
+bool	get_bool(t_mtx *mutex, bool *value);
+void	set_long(t_mtx *mutex, long *dest, long value);
+long	get_long(t_mtx *mutex, long *value);
+bool	simulation_finished(t_table *table);
 
 #endif

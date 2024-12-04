@@ -6,25 +6,11 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/04 11:59:29 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/04 14:19:07 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	wait_all_threads(t_table *table)
-{
-
-	safe_mutex_handle(&table->table_mutex, LOCK);
-	while (table->are_threads_ready == 0)
-	{
-		safe_mutex_handle(&table->table_mutex, UNLOCK);
-		usleep(10);
-		safe_mutex_handle(&table->table_mutex, LOCK);
-	}
-	safe_mutex_handle(&table->table_mutex, UNLOCK);
-
-}
 
 void	*dinner_simulation(void *data)
 {
@@ -33,7 +19,7 @@ void	*dinner_simulation(void *data)
 	philo = (t_philo *) data;
 	wait_all_threads(philo->table);
 
-	while (!make_dinner(philo->table))
+	while (!simulation_finished(philo->table))
 	{
 		// 1) am I full?
 		if (philo->is_full)
@@ -46,7 +32,7 @@ void	*dinner_simulation(void *data)
 	return (NULL);
 }
 
-void	make_dinner(t_table *table)
+void	dinner_start(t_table *table)
 {
 	int		i;
 
@@ -65,11 +51,7 @@ void	make_dinner(t_table *table)
 		}
 	}
 	table->start_time = get_time(MILLISECONDS);
-
-	safe_mutex_handle(&table->table_mutex, LOCK);
-	table->are_threads_ready = 1;
-	safe_mutex_handle(&table->table_mutex, UNLOCK);
-
+	set_bool(&table->table_mutex, &table->are_threads_ready, true);
 	i = -1;
 	while (++i < table->nbr_philo)
 	{

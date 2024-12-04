@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:50:14 by mmravec           #+#    #+#             */
-/*   Updated: 2024/11/18 17:51:17 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/04 12:40:11 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	init_data(t_table *table)
 	table->philos = safe_malloc(table->nbr_philo * sizeof(t_philo));
 	table->forks = safe_malloc(table->nbr_philo * sizeof(t_fork));
 	safe_mutex_handle(&table->table_mutex, INIT);
+	safe_mutex_handle(&table->write_mutex, INIT);
 	while (i < table->nbr_philo)
 	{
 		safe_mutex_handle(&table->forks[i].fork, INIT);

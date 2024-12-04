@@ -6,7 +6,7 @@
 #    By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/03 16:05:35 by mmravec           #+#    #+#              #
-#    Updated: 2024/11/18 17:26:13 by mmravec          ###   ########.fr        #
+#    Updated: 2024/12/04 14:22:06 by mmravec          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,8 @@ CC = gcc-14
 CFLAGS = -Wall -Werror -Wextra -g -pthread
 
 # Source files
-SRCS = main.c utils.c parse.c init.c safe_functions.c dinner.c
+SRCS = main.c utils.c parse.c init.c safe_functions.c dinner.c write.c \\
+	getters_setters.c synchro_utils.c
 OBJS = $(SRCS:.c=.o)
 
 # Rule to build the so_long executable

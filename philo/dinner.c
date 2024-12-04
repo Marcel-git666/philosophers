@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2024/11/19 17:14:13 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/04 11:59:29 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,17 @@ void	*dinner_simulation(void *data)
 
 	philo = (t_philo *) data;
 	wait_all_threads(philo->table);
+
+	while (!make_dinner(philo->table))
+	{
+		// 1) am I full?
+		if (philo->is_full)
+			break;
+		// 2) eat
+		eat(philo);
+		// 3) sleep -> write status
+		// 4) think
+	}
 	return (NULL);
 }
 
@@ -52,10 +63,12 @@ void	make_dinner(t_table *table)
 				&table->philos[i], CREATE);
 			printf("Philo %d is ready.\n", table->philos[i].id);
 		}
-		safe_mutex_handle(&table->table_mutex, LOCK);
-		table->are_threads_ready = 1;
-		safe_mutex_handle(&table->table_mutex, UNLOCK);
 	}
+	table->start_time = get_time(MILLISECONDS);
+
+	safe_mutex_handle(&table->table_mutex, LOCK);
+	table->are_threads_ready = 1;
+	safe_mutex_handle(&table->table_mutex, UNLOCK);
 
 	i = -1;
 	while (++i < table->nbr_philo)

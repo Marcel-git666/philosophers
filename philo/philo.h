@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/05 15:05:18 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/05 17:33:47 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,33 +34,33 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
-	int id;
-	long meals_counter;
-	bool is_full;
-	long last_meal_time;
-	t_fork *left_fork;
-	t_fork *right_fork;
-	pthread_t thread_id;
-	t_mtx philo_mutex;
-	t_table *table;
+	int			id;
+	long		meals_counter;
+	bool		is_full;
+	long		last_meal_time;
+	t_fork		*first_fork;
+	t_fork		*second_fork;
+	pthread_t	thread_id;
+	t_mtx		philo_mutex;
+	t_table		*table;
 } t_philo;
 
 struct s_table
 {
-	long nbr_philo;
-	long time_to_die;
-	long time_to_eat;
-	long time_to_sleep;
-	long nbr_limit_meals;
-	long start_time;
-	bool is_finished;
-	bool are_threads_ready;
-	long threads_running_nbr;
-	pthread_t monitor;
-	t_mtx table_mutex;
-	t_mtx write_mutex;
-	t_fork *forks;
-	t_philo *philos;
+	long		nbr_philo;
+	long 		time_to_die;
+	long		time_to_eat;
+	long		time_to_sleep;
+	long		nbr_limit_meals;
+	long		start_time;
+	bool		is_finished;
+	bool		are_threads_ready;
+	long		threads_running_nbr;
+	pthread_t	monitor;
+	t_mtx		table_mutex;
+	t_mtx		write_mutex;
+	t_fork		*forks;
+	t_philo		*philos;
 };
 
 typedef enum e_opcode
@@ -72,23 +72,24 @@ typedef enum e_opcode
 	CREATE,
 	JOIN,
 	DETACH
-} t_opcode;
+}		t_opcode;
 
 typedef enum e_time_code
 {
 	SECONDS,
 	MILLISECONDS,
 	MICROSECONDS
-} t_time_code;
+}		t_time_code;
 
 typedef enum e_status
 {
 	EATING,
 	SLEEPING,
 	THINKING,
-	TAKE_LEFT_FORK,
-	TAKE_RIGHT_FORK,
-	DIED
+	TAKE_FIRST_FORK,
+	TAKE_SECOND_FORK,
+	DIED,
+	TEST
 } t_philo_status;
 
 long	ft_atoi(const char *str);

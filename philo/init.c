@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:50:14 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/05 14:00:18 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/05 18:30:23 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ static void	assign_forks(t_philo *philo, t_fork *forks, int pos)
 	int		philo_nbr;
 
 	philo_nbr = philo->table->nbr_philo;
-	philo->left_fork = &forks[(pos + 1) % philo_nbr];
-	philo->right_fork = &forks[pos];
+	philo->first_fork = &forks[(pos + 1) % philo_nbr];
+	philo->second_fork = &forks[pos];
 	if (philo->id % 2 == 0)
 	{
-		philo->left_fork = &forks[pos];
-		philo->right_fork = &forks[(pos + 1) % philo_nbr];
+		philo->first_fork = &forks[pos];
+		philo->second_fork = &forks[(pos + 1) % philo_nbr];
 	}
 }
 
@@ -63,5 +63,4 @@ void	init_data(t_table *table)
 		i++;
 	}
 	init_philo(table);
-	write(1, "Init has finished.\n", 19);
 }

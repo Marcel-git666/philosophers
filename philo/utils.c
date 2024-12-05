@@ -6,35 +6,27 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/04 12:09:14 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/05 15:03:47 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_atoi(const char *str)
+void	clean(t_table *table)
 {
-	int	result;
-	int	positive;
+	 t_philo	*philo;
+	int			i;
 
-	positive = 1;
-	result = 0;
-	while ((*str >= 9 && *str <= 13) || *str == 32)
+	i = -1;
+	while (++i < table->nbr_philo)
 	{
-		str++;
+		philo = table->philos + i;
+		safe_mutex_handle(&philo->philo_mutex, DESTROY);
 	}
-	if (*str == '+' || *str == '-')
-	{
-		if (*str == '-')
-			positive = positive * (-1);
-		str++;
-	}
-	while (*str >= '0' && *str <= '9')
-	{
-		result = result * 10 + (*str - '0');
-		str++;
-	}
-	return (result * positive);
+	safe_mutex_handle(&table->table_mutex, DESTROY);
+	safe_mutex_handle(&table->write_mutex, DESTROY);
+	free(table->forks);
+	free(table->philos);
 }
 
 size_t	ft_strlen(const char *s)
@@ -86,7 +78,7 @@ void	precise_usleep(long usec, t_table *table)
 		elapsed = get_time(MICROSECONDS) - start;
 		remaining = usec - elapsed;
 		if (remaining > 1e3)
-			usleep(usec / 2);
+			usleep(remaining / 2);
 		else
 			while (get_time(MICROSECONDS) - start < usec)
 				;

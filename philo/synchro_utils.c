@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:10:39 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/04 16:41:34 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/05 11:32:40 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,16 @@ void	wait_all_threads(t_table *table)
 		;
 }
 
-void all_threads_are_running(void)
+bool	all_threads_are_running(t_mtx *mutex, long *threads, long philo_nbr)
 {
+	bool	ret;
 
+	ret = false;
+	safe_mutex_handle(mutex, LOCK);
+	if (*threads == philo_nbr)
+		ret = true;
+	safe_mutex_handle(mutex, UNLOCK);
+	return (ret);
 }
 
 void	increase_long(t_mtx *mutex, long *value)

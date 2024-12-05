@@ -6,61 +6,61 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/04 16:37:19 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/05 15:05:18 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
-# define PHILO_H
-# include <unistd.h>
-# include <stdlib.h>
-# include <pthread.h>
-# include <sys/time.h>
-# include <errno.h>
-# include <stdio.h>
-# include <stdbool.h>
+#define PHILO_H
+#include <unistd.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <sys/time.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdbool.h>
 
-# define DEBUG_MODE 1
+#define DEBUG_MODE 1
 
-typedef struct s_table	t_table;
+typedef struct s_table t_table;
 
-typedef pthread_mutex_t	t_mtx;
+typedef pthread_mutex_t t_mtx;
 
 typedef struct s_fork
 {
-	t_mtx	fork;
-	int		fork_id;
-}		t_fork;
+	t_mtx fork;
+	int fork_id;
+} t_fork;
 
 typedef struct s_philo
 {
-	long		id;
-	int			meals_counter;
-	bool		is_full;
-	long		last_meal_time;
-	t_fork		*left_fork;
-	t_fork		*right_fork;
-	pthread_t	thread_id;
-	t_mtx		philo_mutex;
-	t_table		*table;
-}		t_philo;
+	int id;
+	long meals_counter;
+	bool is_full;
+	long last_meal_time;
+	t_fork *left_fork;
+	t_fork *right_fork;
+	pthread_t thread_id;
+	t_mtx philo_mutex;
+	t_table *table;
+} t_philo;
 
 struct s_table
 {
-	long		nbr_philo;
-	long		time_to_die;
-	long		time_to_eat;
-	long		time_to_sleep;
-	long		nbr_limit_meals;
-	long		start_time;
-	bool		is_finished;
-	bool		are_threads_ready;
-	long		threads_running_nbr;
-	pthread_t	monitor;
-	t_mtx		table_mutex;
-	t_mtx		write_mutex;
-	t_fork		*forks;
-	t_philo		*philos;
+	long nbr_philo;
+	long time_to_die;
+	long time_to_eat;
+	long time_to_sleep;
+	long nbr_limit_meals;
+	long start_time;
+	bool is_finished;
+	bool are_threads_ready;
+	long threads_running_nbr;
+	pthread_t monitor;
+	t_mtx table_mutex;
+	t_mtx write_mutex;
+	t_fork *forks;
+	t_philo *philos;
 };
 
 typedef enum e_opcode
@@ -72,14 +72,14 @@ typedef enum e_opcode
 	CREATE,
 	JOIN,
 	DETACH
-}		t_opcode;
+} t_opcode;
 
 typedef enum e_time_code
 {
 	SECONDS,
 	MILLISECONDS,
 	MICROSECONDS
-}	t_time_code;
+} t_time_code;
 
 typedef enum e_status
 {
@@ -89,9 +89,9 @@ typedef enum e_status
 	TAKE_LEFT_FORK,
 	TAKE_RIGHT_FORK,
 	DIED
-}	t_philo_status;
+} t_philo_status;
 
-int		ft_atoi(const char *str);
+long	ft_atoi(const char *str);
 int		ft_printf(const char *format, ...);
 void	parse_input(t_table *table, char **argv);
 void	init_data(t_table *table);
@@ -113,5 +113,7 @@ bool	simulation_finished(t_table *table);
 void	write_status(t_philo_status status, t_philo *philo, bool debug);
 void	*monitor_dinner(void *data);
 void	increase_long(t_mtx *mutex, long *value);
+bool	all_threads_are_running(t_mtx *mutex, long *threads, long philo_nbr);
+void	clean(t_table *table);
 
 #endif

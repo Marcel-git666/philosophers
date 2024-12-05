@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:57:05 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/04 15:50:54 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/05 14:21:32 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	set_long(t_mtx *mutex, long *dest, long value)
 
 long	get_long(t_mtx *mutex, long *value)
 {
-	bool	ret;
+	long	ret;
 
 	safe_mutex_handle(mutex, LOCK);
 	ret = *value;

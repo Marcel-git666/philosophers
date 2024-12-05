@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:50:14 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/04 20:58:42 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/05 14:00:18 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,5 @@ void	init_data(t_table *table)
 		i++;
 	}
 	init_philo(table);
+	write(1, "Init has finished.\n", 19);
 }

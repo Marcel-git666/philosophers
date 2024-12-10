@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/05 15:03:47 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/10 16:45:23 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,8 @@ void	precise_usleep(long usec, t_table *table)
 		if (remaining > 1e3)
 			usleep(remaining / 2);
 		else
-			while (get_time(MICROSECONDS) - start < usec)
-				;
+			usleep(50);
+			// while (get_time(MICROSECONDS) - start < usec)
+			// 	;
 	}
 }

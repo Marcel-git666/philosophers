@@ -6,15 +6,42 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 15:26:20 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/10 17:14:09 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+static int get_min_meals(t_table *table) {
+    int i;
+    int min_meals = INT_MAX;
+
+    i = -1;
+    while (++i < table->nbr_philo) {
+        int meals = get_long(&table->philos[i].philo_mutex, &table->philos[i].meals_counter);
+        if (meals < min_meals) {
+            min_meals = meals;
+        }
+    }
+    return min_meals;
+}
+
+static void wait_for_priority(t_philo *philo) {
+    while (!simulation_finished(philo->table)) {
+        int min_meals = get_min_meals(philo->table);
+        int my_meals = get_long(&philo->philo_mutex, &philo->meals_counter);
+
+        if (my_meals <= min_meals) {
+            break; // It's this philosopher's turn to eat
+        }
+        usleep(50); // Small wait to avoid busy looping
+    }
+}
+
 static void	think(t_philo *philo)
 {
 	write_status(THINKING, philo, DEBUG_MODE);
+	usleep(50);
 }
 
 static void	*lone_philo(void *data)
@@ -36,6 +63,7 @@ static void	*lone_philo(void *data)
 
 static void	eat(t_philo *philo)
 {
+	wait_for_priority(philo);
 	safe_mutex_handle(&philo->first_fork->fork, LOCK);
 	write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
 	safe_mutex_handle(&philo->second_fork->fork, LOCK);
@@ -44,8 +72,8 @@ static void	eat(t_philo *philo)
 	set_long(&philo->philo_mutex, &philo->last_meal_time,
 		get_time(MILLISECONDS));
 	write_status(EATING, philo, DEBUG_MODE);
-	// precise_usleep(philo->table->time_to_eat, philo->table);
 	usleep(philo->table->time_to_eat * 1000);
+	// precise_usleep(philo->table->time_to_eat * 1000, philo->table);
 	if (philo->table->nbr_limit_meals > 0
 		&& philo->meals_counter == philo->table->nbr_limit_meals)
 		set_bool(&philo->philo_mutex, &philo->is_full, true);
@@ -63,6 +91,8 @@ void	*dinner_simulation(void *data)
 		get_time(MILLISECONDS));
 	increase_long(&philo->table->table_mutex,
 		&philo->table->threads_running_nbr);
+	if (philo->id % 2 == 0)
+		usleep(100);
 	while (!simulation_finished(philo->table))
 	{
 		// 1) am I full?
@@ -75,7 +105,7 @@ void	*dinner_simulation(void *data)
 		// write_status(TEST, philo, DEBUG_MODE);
 		write_status(SLEEPING, philo, DEBUG_MODE);
 		usleep(philo->table->time_to_sleep * 1000);
-		// precise_usleep(philo->table->time_to_sleep, philo->table);
+		// precise_usleep(philo->table->time_to_sleep * 1000, philo->table);
 		// write_status(TEST, philo, DEBUG_MODE);
 		// 4) think
 		think(philo);

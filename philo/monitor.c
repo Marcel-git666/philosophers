@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 16:23:55 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/05 14:38:33 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/10 17:07:36 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,17 @@
 
 static bool	philo_died(t_philo *philo)
 {
-	long	elapsed;
+	long	last_meal_time;
+	long	current_time;
 	long	t_t_die;
 
 	if (get_bool(&philo->philo_mutex, &philo->is_full))
 		return (false);
-	elapsed = get_time(MILLISECONDS) - get_long(&philo->philo_mutex,
+	current_time = get_time(MILLISECONDS);
+	last_meal_time = get_long(&philo->philo_mutex,
 			&philo->last_meal_time);
 	t_t_die = philo->table->time_to_die;
-	if (elapsed > t_t_die)
+	if (current_time - last_meal_time > t_t_die)
 		return (true);
 	return (false);
 }
@@ -45,8 +47,10 @@ void	*monitor_dinner(void *data)
 			{
 				set_bool(&table->table_mutex, &table->is_finished, true);
 				write_status(DIED, table->philos + i, DEBUG_MODE);
+				return (NULL);
 			}
 		}
+		usleep(10);
 	}
 	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:50:14 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/05 18:30:23 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/10 17:05:22 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,20 @@ static void	assign_forks(t_philo *philo, t_fork *forks, int pos)
 	int		philo_nbr;
 
 	philo_nbr = philo->table->nbr_philo;
-	philo->first_fork = &forks[(pos + 1) % philo_nbr];
-	philo->second_fork = &forks[pos];
-	if (philo->id % 2 == 0)
-	{
-		philo->first_fork = &forks[pos];
-		philo->second_fork = &forks[(pos + 1) % philo_nbr];
-	}
+	if (philo->id % 2 == 0) {
+        philo->first_fork = &forks[(pos + 1) % philo_nbr];
+        philo->second_fork = &forks[pos];
+    } else {
+        philo->first_fork = &forks[pos];
+        philo->second_fork = &forks[(pos + 1) % philo_nbr];
+    }
+	// philo->first_fork = &forks[(pos + 1) % philo_nbr];
+	// philo->second_fork = &forks[pos];
+	// if (philo->id % 2 == 0)
+	// {
+	// 	philo->first_fork = &forks[pos];
+	// 	philo->second_fork = &forks[(pos + 1) % philo_nbr];
+	// }
 }
 
 static void	init_philo(t_table *table)

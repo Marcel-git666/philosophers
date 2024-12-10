@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:36:21 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/05 14:27:36 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/10 15:31:06 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,10 @@ int	main(int argc, char **argv)
 	{
 		parse_input(&table, argv);
 		if (table.nbr_philo > 200)
-			error_exit("Too many philosophers (200 is max)");
+			ft_printf("Too many philosophers (200 is max), unexpected results.");
+		if (table.time_to_die < 1 || table.time_to_eat < 1
+			|| table.time_to_sleep < 1)
+			error_exit("Wrong arguments. ./philo 5 100 50 20 [7]");
 		init_data(&table);
 		dinner_start(&table);
 		clean(&table);

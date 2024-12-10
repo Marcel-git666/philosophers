@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/05 20:38:05 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/10 15:26:20 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,6 @@ static void	eat(t_philo *philo)
 	write_status(EATING, philo, DEBUG_MODE);
 	// precise_usleep(philo->table->time_to_eat, philo->table);
 	usleep(philo->table->time_to_eat * 1000);
-	set_long(&philo->philo_mutex, &philo->last_meal_time,
-		get_time(MILLISECONDS));
 	if (philo->table->nbr_limit_meals > 0
 		&& philo->meals_counter == philo->table->nbr_limit_meals)
 		set_bool(&philo->philo_mutex, &philo->is_full, true);

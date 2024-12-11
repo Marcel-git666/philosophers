@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 17:13:39 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/10 17:29:03 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <stdbool.h>
 # include <limits.h>
 
-# define DEBUG_MODE 1
+# define DEBUG_MODE 0
 
 typedef struct s_table t_table;
 
@@ -89,8 +89,7 @@ typedef enum e_status
 	THINKING,
 	TAKE_FIRST_FORK,
 	TAKE_SECOND_FORK,
-	DIED,
-	TEST
+	DIED
 } t_philo_status;
 
 long ft_atoi(const char *str);

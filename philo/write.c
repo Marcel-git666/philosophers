@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:35:51 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/05 17:40:05 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/10 17:28:47 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@ static void	write_status_debug(t_philo_status status, t_philo *philo,
 		ft_printf("%l ms Philo: %d is thinking.\n", elapsed, philo->id);
 	else if (status == DIED)
 		ft_printf("%l ms Philo: %d has died.\n", elapsed, philo->id);
-	else if (status == TEST)
-		ft_printf("%l ms Philo: %d test \n", elapsed, philo->id);
 }
 
 void	write_status(t_philo_status status, t_philo *philo, bool debug)
@@ -47,17 +45,15 @@ void	write_status(t_philo_status status, t_philo *philo, bool debug)
 	{
 		if ((status == TAKE_FIRST_FORK || status == TAKE_SECOND_FORK)
 			&& !simulation_finished(philo->table))
-			ft_printf("%l %d has taken a fork.\n", elapsed, philo->id);
+			ft_printf("%l %d has taken a fork\n", elapsed, philo->id);
 		else if (status == EATING && !simulation_finished(philo->table))
-			ft_printf("%l %d is eating.\n", elapsed, philo->id);
+			ft_printf("%l %d is eating\n", elapsed, philo->id);
 		else if (status == SLEEPING && !simulation_finished(philo->table))
-			ft_printf("%l %d is sleeping.\n", elapsed, philo->id);
+			ft_printf("%l %d is sleeping\n", elapsed, philo->id);
 		else if (status == THINKING && !simulation_finished(philo->table))
-			ft_printf("%l %d is thinking.\n", elapsed, philo->id);
+			ft_printf("%l %d is thinking\n", elapsed, philo->id);
 		else if (status == DIED)
-			ft_printf("%l %d has died.\n", elapsed, philo->id);
-		else if (status == TEST)
-			ft_printf("%l %d test \n", elapsed, philo->id);
+			ft_printf("%l %d died\n", elapsed, philo->id);
 	}
 	safe_mutex_handle(&philo->table->write_mutex, UNLOCK);
 }

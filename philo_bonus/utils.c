@@ -6,25 +6,16 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 16:45:23 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/12 15:21:30 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 void	clean(t_table *table)
 {
-	 t_philo	*philo;
-	int			i;
-
-	i = -1;
-	while (++i < table->nbr_philo)
-	{
-		philo = table->philos + i;
-		safe_mutex_handle(&philo->philo_mutex, DESTROY);
-	}
-	safe_mutex_handle(&table->table_mutex, DESTROY);
-	safe_mutex_handle(&table->write_mutex, DESTROY);
+	sem_unlink("/forks_sem");
+	sem_unlink("/write_sem");
 	free(table->forks);
 	free(table->philos);
 }

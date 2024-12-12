@@ -6,47 +6,25 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:57:05 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/05 14:21:32 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/12 16:13:07 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
-void	set_bool(t_mtx *mutex, bool *dest, bool value)
-{
-	safe_mutex_handle(mutex, LOCK);
-	*dest = value;
-	safe_mutex_handle(mutex, UNLOCK);
-}
+// void	set_simulation_finished(t_table *table, bool value)
+// {
+// 	// sem_wait(table->write_sem);  // Block other processes
+// 	// table->is_finished = value; // Modify the shared variable
+// 	sem_post(table->write_sem); // Release semaphore
+// }
 
-bool	get_bool(t_mtx *mutex, bool *value)
-{
-	bool	ret;
+// bool	simulation_finished(t_table *table)
+// {
+// 	bool	is_finished;
 
-	safe_mutex_handle(mutex, LOCK);
-	ret = *value;
-	safe_mutex_handle(mutex, UNLOCK);
-	return (ret);
-}
-
-void	set_long(t_mtx *mutex, long *dest, long value)
-{
-	safe_mutex_handle(mutex, LOCK);
-	*dest = value;
-	safe_mutex_handle(mutex, UNLOCK);
-}
-
-long	get_long(t_mtx *mutex, long *value)
-{
-	long	ret;
-
-	safe_mutex_handle(mutex, LOCK);
-	ret = *value;
-	safe_mutex_handle(mutex, UNLOCK);
-	return (ret);
-}
-
-bool	simulation_finished(t_table *table)
-{
-	return (get_bool(&table->table_mutex, &table->is_finished));
-}
+// 	sem_wait(table->write_sem);
+// 	is_finished = table->is_finished;
+// 	sem_post(table->write_sem);
+// 	return (is_finished);
+// }

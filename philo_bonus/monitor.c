@@ -6,11 +6,11 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 16:23:55 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 17:07:36 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/12 16:10:40 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 static bool	philo_died(t_philo *philo)
 {
@@ -18,39 +18,60 @@ static bool	philo_died(t_philo *philo)
 	long	current_time;
 	long	t_t_die;
 
-	if (get_bool(&philo->philo_mutex, &philo->is_full))
-		return (false);
 	current_time = get_time(MILLISECONDS);
-	last_meal_time = get_long(&philo->philo_mutex,
-			&philo->last_meal_time);
+	safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->write_sem);
+	last_meal_time = philo->last_meal_time;
 	t_t_die = philo->table->time_to_die;
+	safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->write_sem);
 	if (current_time - last_meal_time > t_t_die)
 		return (true);
 	return (false);
 }
 
-void	*monitor_dinner(void *data)
+void	monitor_dinner(void *data)
 {
 	t_table	*table;
 	int		i;
 
 	table = (t_table *)data;
-	while (!all_threads_are_running(&table->table_mutex,
-			&table->threads_running_nbr, table->nbr_philo))
-		;
-	while (!simulation_finished(table))
+	while (true)
 	{
 		i = -1;
-		while (++i < table->nbr_philo && !simulation_finished(table))
+		while (++i < table->nbr_philo)
 		{
 			if (philo_died(table->philos + i))
 			{
-				set_bool(&table->table_mutex, &table->is_finished, true);
+				// Mark simulation as finished and print death status
+				safe_semaphore_handle(NULL, 0, SEM_WAIT, table->write_sem);
+				table->is_finished = true;
 				write_status(DIED, table->philos + i, DEBUG_MODE);
-				return (NULL);
+				safe_semaphore_handle(NULL, 0, SEM_POST, table->write_sem);
+
+				// Kill all philosopher processes
+				for (int j = 0; j < table->nbr_philo; j++)
+					safe_process_handle(&table->philos[j].process_id, NULL, NULL, KILL);
+
+				exit(0);
 			}
 		}
-		usleep(10);
+
+		// If a meal limit is set, check if all philosophers are full
+		if (table->nbr_limit_meals > 0)
+		{
+			int	full_philos = 0;
+
+			for (i = 0; i < table->nbr_philo; i++)
+			{
+				safe_semaphore_handle(NULL, 0, SEM_WAIT, table->write_sem);
+				if (table->philos[i].meals_counter >= table->nbr_limit_meals)
+					full_philos++;
+				safe_semaphore_handle(NULL, 0, SEM_POST, table->write_sem);
+			}
+
+			if (full_philos == table->nbr_philo)
+				exit(0); // All philosophers have eaten enough
+		}
+
+		usleep(1000); // Avoid excessive CPU usage
 	}
-	return (NULL);
 }

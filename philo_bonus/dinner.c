@@ -6,138 +6,100 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 17:14:09 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/12 15:54:31 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
-
-static int get_min_meals(t_table *table) {
-    int i;
-    int min_meals = INT_MAX;
-
-    i = -1;
-    while (++i < table->nbr_philo) {
-        int meals = get_long(&table->philos[i].philo_mutex, &table->philos[i].meals_counter);
-        if (meals < min_meals) {
-            min_meals = meals;
-        }
-    }
-    return min_meals;
-}
-
-static void wait_for_priority(t_philo *philo) {
-    while (!simulation_finished(philo->table)) {
-        int min_meals = get_min_meals(philo->table);
-        int my_meals = get_long(&philo->philo_mutex, &philo->meals_counter);
-
-        if (my_meals <= min_meals) {
-            break; // It's this philosopher's turn to eat
-        }
-        usleep(50); // Small wait to avoid busy looping
-    }
-}
+#include "philo_bonus.h"
 
 static void	think(t_philo *philo)
 {
 	write_status(THINKING, philo, DEBUG_MODE);
-	usleep(50);
 }
 
-static void	*lone_philo(void *data)
+static void	*lone_philo(t_table *table)
 {
-	t_philo	*philo;
+	pid_t	process_id;
 
-	philo = (t_philo *) data;
-	wait_all_threads(philo->table);
-	set_long(&philo->philo_mutex, &philo->last_meal_time, get_time(MILLISECONDS));
-	increase_long(&philo->table->table_mutex,
-		&philo->table->threads_running_nbr);
-	write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
-	while (!simulation_finished(philo->table))
+	process_id = fork();
+	if (process_id == 0)
 	{
-		usleep(200);
+		write_status(TAKE_FIRST_FORK, &table->philos[0], DEBUG_MODE);
+		usleep(table->time_to_die * 1000);
+		write_status(DIED, &table->philos[0], DEBUG_MODE);
+		exit(0);
 	}
+	else if (process_id < 0)
+	{
+		error_exit("Fork failed for single philosopher.");
+	}
+	waitpid(process_id, NULL, 0);
 	return (NULL);
 }
 
 static void	eat(t_philo *philo)
 {
-	wait_for_priority(philo);
-	safe_mutex_handle(&philo->first_fork->fork, LOCK);
+	// Wait for two forks (semaphores)
+	safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->forks);
 	write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
-	safe_mutex_handle(&philo->second_fork->fork, LOCK);
+	safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->forks);
 	write_status(TAKE_SECOND_FORK, philo, DEBUG_MODE);
+
+	// Update meal count and last meal time
 	philo->meals_counter++;
-	set_long(&philo->philo_mutex, &philo->last_meal_time,
-		get_time(MILLISECONDS));
 	write_status(EATING, philo, DEBUG_MODE);
 	usleep(philo->table->time_to_eat * 1000);
-	// precise_usleep(philo->table->time_to_eat * 1000, philo->table);
-	if (philo->table->nbr_limit_meals > 0
-		&& philo->meals_counter == philo->table->nbr_limit_meals)
-		set_bool(&philo->philo_mutex, &philo->is_full, true);
-	safe_mutex_handle(&philo->first_fork->fork, UNLOCK);
-	safe_mutex_handle(&philo->second_fork->fork, UNLOCK);
+
+	// Release the forks (semaphores)
+	safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->forks);
+	safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->forks);
 }
 
-void	*dinner_simulation(void *data)
+
+void	dinner_simulation(void *data)
 {
 	t_philo	*philo;
 
-	philo = (t_philo *) data;
-	wait_all_threads(philo->table);
-	set_long(&philo->philo_mutex, &philo->last_meal_time,
-		get_time(MILLISECONDS));
-	increase_long(&philo->table->table_mutex,
-		&philo->table->threads_running_nbr);
+	philo = (t_philo *)data;
+	safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->start_sem);
+	philo->last_meal_time = get_time(MILLISECONDS);
 	if (philo->id % 2 == 0)
 		usleep(100);
-	while (!simulation_finished(philo->table))
+	while (true)
 	{
-		// 1) am I full?
-		if (philo->is_full)
-			break;
-		// write_status(TEST, philo, DEBUG_MODE);
-		// 2) eat
 		eat(philo);
-		// 3) sleep -> write status
-		// write_status(TEST, philo, DEBUG_MODE);
 		write_status(SLEEPING, philo, DEBUG_MODE);
 		usleep(philo->table->time_to_sleep * 1000);
-		// precise_usleep(philo->table->time_to_sleep * 1000, philo->table);
-		// write_status(TEST, philo, DEBUG_MODE);
-		// 4) think
 		think(philo);
-		// write_status(TEST, philo, DEBUG_MODE);
+		if (philo->table->nbr_limit_meals > 0
+			&& philo->meals_counter >= philo->table->nbr_limit_meals)
+			break ;
 	}
-	return (NULL);
+	exit (0);
 }
 
 void	dinner_start(t_table *table)
 {
 	int		i;
 
-	i = -1;
-	if (table->nbr_limit_meals == 0)
-		return ;
-	else if (table->nbr_philo == 1)
-	{
-		safe_thread_handle(&table->philos[0].thread_id, lone_philo,
-			&table->philos[0], CREATE);
-	}
-	else
-	{
-		while (++i < table->nbr_philo)
-			safe_thread_handle(&table->philos[i].thread_id, dinner_simulation,
-				&table->philos[i], CREATE);
-	}
-	safe_thread_handle(&table->monitor, monitor_dinner, table, CREATE);
 	table->start_time = get_time(MILLISECONDS);
-	set_bool(&table->table_mutex, &table->are_threads_ready, true);
+	if (table->nbr_philo == 1)
+	{
+		lone_philo(table);
+		return ;
+	}
 	i = -1;
 	while (++i < table->nbr_philo)
-		safe_thread_handle(&table->philos[i].thread_id, NULL, NULL, JOIN);
-	set_bool(&table->table_mutex, &table->is_finished, true);
-	safe_thread_handle(&table->monitor, NULL, NULL, JOIN);
+		safe_process_handle(&table->philos[i].process_id, table->philos + i,
+			dinner_simulation, CREATE);
+	safe_process_handle(&table->monitor_process_id, (void *)table,
+			monitor_dinner, CREATE);
+
+	// Wait for all philosopher processes to finish
+	i = -1;
+	while (++i < table->nbr_philo)
+		safe_process_handle(&table->philos[i].process_id, NULL, NULL, WAIT);
+
+	// Kill the monitor process once all philosophers are done
+	safe_process_handle(&table->monitor_process_id, NULL, NULL, KILL);
 }

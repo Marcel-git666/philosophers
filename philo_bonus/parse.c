@@ -6,11 +6,11 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:25:05 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 15:31:44 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/12 16:13:43 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 long	ft_atoi(const char *str)
 {

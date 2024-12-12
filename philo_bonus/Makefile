@@ -6,12 +6,12 @@
 #    By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/03 16:05:35 by mmravec           #+#    #+#              #
-#    Updated: 2024/12/12 16:13:18 by mmravec          ###   ########.fr        #
+#    Updated: 2024/12/12 16:26:05 by mmravec          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo_bonus
-CC = gcc-14
+CC = cc
 CFLAGS = -Wall -Werror -Wextra -g
 
 # Source files

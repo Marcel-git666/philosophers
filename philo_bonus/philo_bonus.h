@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/12 15:55:16 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/12 16:27:42 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@
 # include <stdbool.h>
 # include <limits.h>
 # include <signal.h>
+# include <sys/types.h>
+# include <sys/wait.h>
+# include <fcntl.h>
 
 # define DEBUG_MODE 0
 

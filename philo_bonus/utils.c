@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/12 15:21:30 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/12 16:30:46 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 
 void	clean(t_table *table)
 {
-	sem_unlink("/forks_sem");
-	sem_unlink("/write_sem");
-	free(table->forks);
+	safe_semaphore_handle("/forks_sem", 0, SEM_UNLINK, NULL);
+	safe_semaphore_handle("/write_sem", 0, SEM_UNLINK, NULL);
+	safe_semaphore_handle(NULL, 0, SEM_CLOSE, table->forks);
+	safe_semaphore_handle(NULL, 0, SEM_CLOSE, table->write_sem);
 	free(table->philos);
 }
 

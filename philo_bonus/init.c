@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:50:14 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/12 15:24:57 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/12 16:32:28 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ static void	init_philo(t_table *table)
 
 void	init_data(t_table *table)
 {
+	sem_unlink("/forks_sem");
+	sem_unlink("/write_sem");
+	sem_unlink("/start_sem");
 	table->is_finished = false;
 	table->philos = safe_malloc(table->nbr_philo * sizeof(t_philo));
 	table->forks = safe_semaphore_handle("/forks_sem", table->nbr_philo,

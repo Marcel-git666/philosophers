@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/16 16:00:37 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/16 18:28:11 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <fcntl.h>
+# include <string.h>
 
 # define DEBUG_MODE 1
 # define FORKS_SEM "/forks_sem"

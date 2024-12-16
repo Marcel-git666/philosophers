@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:35:51 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/12 16:07:11 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/12 19:06:22 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	write_status(t_philo_status status, t_philo *philo, bool debug)
 	long	elapsed;
 
 	elapsed = get_time(MILLISECONDS) - philo->table->start_time;
-	safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->write_sem);
+	safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, philo->table->write_sem);
 	if (debug)
 		write_status_debug(status, philo, elapsed);
 	else
@@ -52,5 +52,5 @@ void	write_status(t_philo_status status, t_philo *philo, bool debug)
 		else if (status == DIED)
 			ft_printf("%l %d died\n", elapsed, philo->id);
 	}
-	safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->write_sem);
+	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
 }

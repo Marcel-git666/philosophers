@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/12 16:27:42 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/16 16:00:37 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,12 @@
 # include <sys/wait.h>
 # include <fcntl.h>
 
-# define DEBUG_MODE 0
+# define DEBUG_MODE 1
+# define FORKS_SEM "/forks_sem"
+# define WRITE_SEM "/write_sem"
+# define START_SEM "/start_sem"
+# define FINISHED_SEM "/finished_sem"
+
 
 typedef struct s_table t_table;
 
@@ -49,7 +54,7 @@ struct s_table
 	long	time_to_sleep;
 	long	nbr_limit_meals;
 	long	start_time;
-	bool	is_finished;
+	sem_t	*finished_sem;
 	pid_t	monitor_process_id;
 	sem_t	*write_sem;
 	sem_t	*forks;
@@ -70,7 +75,9 @@ typedef enum e_opcode
 {
 	CREATE,
 	KILL,
-	WAIT
+	WAIT,
+	JOIN,
+	DETACH
 }		t_opcode;
 
 typedef enum e_time_code
@@ -101,14 +108,15 @@ sem_t	*safe_semaphore_handle(const char *name, int initial_value,
 			t_sem_opcode opcode, sem_t *sem);
 void	safe_process_handle(pid_t *process_id, void *data, void (*f)(void *),
 			t_opcode opcode);
-void	init_data(t_table *table);
+void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
+	t_opcode opcode);
 void	dinner_start(t_table *table);
-
 void	precise_usleep(long usec, t_table *table);
 
 bool	simulation_finished(t_table *table);
 void	write_status(t_philo_status status, t_philo *philo, bool debug);
 void	monitor_dinner(void *data);
+void	*monitor_thread(void *data);
 void	clean(t_table *table);
 
 #endif

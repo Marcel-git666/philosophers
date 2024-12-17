@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/16 22:12:55 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/17 16:19:27 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,17 +40,14 @@ static void	*lone_philo(t_table *table)
 static void	eat(t_philo *philo)
 {
 	// Wait for two forks (semaphores)
-	safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, philo->table->write_sem);
-	ft_printf("Philosopher %d trying to take forks\n", philo->id);
-	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
+	safe_semaphore_handle(FORKS_SEM, 0, SEM_WAIT, philo->table->forks);
 	safe_semaphore_handle(FORKS_SEM, 0, SEM_WAIT, philo->table->forks);
 	write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
-	safe_semaphore_handle(FORKS_SEM, 0, SEM_WAIT, philo->table->forks);
 	write_status(TAKE_SECOND_FORK, philo, DEBUG_MODE);
 
 	// Update meal count and last meal time
 	safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, philo->table->write_sem);
-	philo->last_meal_time = get_time(MILLISECONDS); // Synchronize last_meal_time update
+	philo->last_meal_time = get_time(MILLISECONDS);
 	philo->meals_counter++;
 	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
 
@@ -71,20 +68,22 @@ void	dinner_simulation(void *data)
 	philo = (t_philo *)data;
 	safe_thread_handle(&monitor_tid, monitor_thread, philo, CREATE);
 	safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->start_sem);
+	safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->write_sem);
 	philo->last_meal_time = get_time(MILLISECONDS);
+	safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->write_sem);
 	if (philo->id % 2 == 0)
-		usleep(philo->table->time_to_eat * 500);
+		usleep(philo->table->time_to_eat * 1000);
 	while (true)
 	{
-
 		eat(philo);
+		if (philo->table->nbr_limit_meals > 0 && philo->meals_counter >= philo->table->nbr_limit_meals)
+			break;
 		write_status(SLEEPING, philo, DEBUG_MODE);
 		usleep(philo->table->time_to_sleep * 1000);
 		think(philo);
-		if (philo->table->nbr_limit_meals > 0
-			&& philo->meals_counter >= philo->table->nbr_limit_meals)
-			break ;
 	}
+	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
+	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
 	safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, philo->table->write_sem);
 	ft_printf("[DEBUG] Join monitor thread.\n");
 	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
@@ -119,17 +118,14 @@ void	dinner_start(t_table *table)
 	i = -1;
 	while (++i < table->nbr_philo)
 	{
-		safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, table->write_sem);
-		ft_printf("[DEBUG] Posting to start semaphore for philosopher %d\n", i + 1);
-		safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, table->write_sem);
+		// safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, table->write_sem);
+		// ft_printf("[DEBUG] Posting to start semaphore for philosopher %d\n", i + 1);
+		// safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, table->write_sem);
 		safe_semaphore_handle(NULL, 0, SEM_POST, table->start_sem);
 	}
 
 
 	// Wait for all philosopher processes to finish
-	safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, table->write_sem);
-	ft_printf("[DEBUG] Finish processes for philosopher %d\n", i + 1);
-	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, table->write_sem);
 	i = -1;
 	while (++i < table->nbr_philo)
 		safe_process_handle(&table->philos[i].process_id, NULL, NULL, WAIT);

@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/16 18:28:11 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/17 11:53:55 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@
 # define FORKS_SEM "/forks_sem"
 # define WRITE_SEM "/write_sem"
 # define START_SEM "/start_sem"
-# define FINISHED_SEM "/finished_sem"
-
+# define DEATH_SEM "/death_sem"
+# define ALL_FULL_SEM "/all_full_sem"
 
 typedef struct s_table t_table;
 
@@ -55,7 +55,8 @@ struct s_table
 	long	time_to_sleep;
 	long	nbr_limit_meals;
 	long	start_time;
-	sem_t	*finished_sem;
+	sem_t	*death_sem;
+	sem_t	*all_full_sem;
 	pid_t	monitor_process_id;
 	sem_t	*write_sem;
 	sem_t	*forks;

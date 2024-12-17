@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/16 15:06:29 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/17 11:59:49 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,13 @@ void	clean(t_table *table)
 	safe_semaphore_handle(FORKS_SEM, 0, SEM_UNLINK, NULL);
 	safe_semaphore_handle(WRITE_SEM, 0, SEM_UNLINK, NULL);
 	safe_semaphore_handle(START_SEM, 0, SEM_UNLINK, NULL);
-	safe_semaphore_handle(FINISHED_SEM, 0, SEM_UNLINK, NULL);
+	safe_semaphore_handle(DEATH_SEM, 0, SEM_UNLINK, NULL);
+	safe_semaphore_handle(ALL_FULL_SEM, 0, SEM_UNLINK, NULL);
 	safe_semaphore_handle(FORKS_SEM, 0, SEM_CLOSE, table->forks);
 	safe_semaphore_handle(WRITE_SEM, 0, SEM_CLOSE, table->write_sem);
 	safe_semaphore_handle(START_SEM, 0, SEM_CLOSE, table->start_sem);
-	safe_semaphore_handle(FINISHED_SEM, 0, SEM_CLOSE, table->finished_sem);
+	safe_semaphore_handle(DEATH_SEM, 0, SEM_CLOSE, table->death_sem);
+	safe_semaphore_handle(ALL_FULL_SEM, 0, SEM_CLOSE, table->all_full_sem);
 	free(table->philos);
 }
 

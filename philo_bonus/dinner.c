@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/18 16:58:36 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/18 19:13:53 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,13 @@ void	dinner_simulation(void *data)
 	while (true)
 	{
 		eat(philo);
+		safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->meals_sem);
 		if (philo->table->nbr_limit_meals > 0 && philo->meals_counter >= philo->table->nbr_limit_meals)
+		{
+			safe_semaphore_handle(NULL, 0, SEM_POST, philo->meals_sem);
 			break;
+		}
+		safe_semaphore_handle(NULL, 0, SEM_POST, philo->meals_sem);
 		write_status(SLEEPING, philo, DEBUG_MODE);
 		usleep(philo->table->time_to_sleep * 1000);
 		think(philo);

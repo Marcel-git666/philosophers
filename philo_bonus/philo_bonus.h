@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/17 11:53:55 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/18 16:41:02 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ typedef struct s_philo
 	long	meals_counter;
 	long	last_meal_time;
 	pid_t	process_id;
+	sem_t	*meals_sem;
+	char	*sem_name;
 	t_table	*table;
 }		t_philo;
 
@@ -101,6 +103,11 @@ typedef enum e_status
 
 long	ft_atoi(const char *str);
 int		ft_printf(const char *format, ...);
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
+size_t	ft_strlen(const char *s);
+size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
+char	*ft_itoa(int n);
+char	*ft_strdup(const char *s1);
 void	parse_input(t_table *table, char **argv);
 void	init_data(t_table *table);
 void	error_exit(const char *error);

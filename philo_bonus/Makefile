@@ -6,17 +6,17 @@
 #    By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/03 16:05:35 by mmravec           #+#    #+#              #
-#    Updated: 2024/12/17 16:41:34 by mmravec          ###   ########.fr        #
+#    Updated: 2024/12/18 17:00:26 by mmravec          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo_bonus
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g
+CFLAGS = -Wall -Werror -Wextra -g -pthread -fsanitize=thread
 
 # Source files
 SRCS = main.c utils.c parse.c init.c safe_functions.c dinner.c write.c \
-	ft_printf.c ft_printf_utils.c \
+	ft_printf.c ft_printf_utils.c ft_itoa.c ft_utils.c \
 	monitor.c
 
 OBJS = $(SRCS:.c=.o)

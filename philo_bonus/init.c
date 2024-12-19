@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:50:14 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/18 16:39:25 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/19 18:13:38 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ static void	init_philo(t_table *table)
 		philo->meals_counter = 0;
 		philo->last_meal_time = get_time(MILLISECONDS);
 		philo->sem_name = create_sem_name(philo->id);
+		ft_printf("Philo %d: Opening meals_sem with name: %s\n", philo->id, philo->sem_name);
 		if (!philo->sem_name)
 			error_exit("Memory allocation failed");
 		philo->meals_sem = safe_semaphore_handle(

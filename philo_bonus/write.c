@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:35:51 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/12 19:06:22 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/19 20:36:56 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,6 @@ void	write_status(t_philo_status status, t_philo *philo, bool debug)
 		else if (status == DIED)
 			ft_printf("%l %d died\n", elapsed, philo->id);
 	}
+	fflush(stdout);
 	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
 }

@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/18 16:41:02 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/19 20:38:40 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 # include <fcntl.h>
 # include <string.h>
 
-# define DEBUG_MODE 1
+# define DEBUG_MODE 0
 # define FORKS_SEM "/forks_sem"
 # define WRITE_SEM "/write_sem"
 # define START_SEM "/start_sem"
@@ -107,6 +107,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 size_t	ft_strlen(const char *s);
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
 char	*ft_itoa(int n);
+void	ft_itoa_to_str(long num, char *str);
 char	*ft_strdup(const char *s1);
 void	parse_input(t_table *table, char **argv);
 void	init_data(t_table *table);

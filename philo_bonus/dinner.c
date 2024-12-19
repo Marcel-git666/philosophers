@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/18 19:13:53 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/19 18:24:42 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,8 @@ static void	eat(t_philo *philo)
 	long current_time = get_time(MILLISECONDS);
 	philo->last_meal_time = current_time;
 	philo->meals_counter++;
-	safe_semaphore_handle(NULL, 0, SEM_POST, philo->meals_sem);
-
 	write_status(EATING, philo, DEBUG_MODE);
+	safe_semaphore_handle(NULL, 0, SEM_POST, philo->meals_sem);
 	usleep(philo->table->time_to_eat * 1000);
 
 	// Release the forks (semaphores)
@@ -85,11 +84,9 @@ void	dinner_simulation(void *data)
 		}
 		safe_semaphore_handle(NULL, 0, SEM_POST, philo->meals_sem);
 		write_status(SLEEPING, philo, DEBUG_MODE);
-		usleep(philo->table->time_to_sleep * 1000);
+		usleep(philo->table->time_to_sleep * 1000 + philo->id);
 		think(philo);
 	}
-	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
-	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
 	safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, philo->table->write_sem);
 	ft_printf("[DEBUG] Join monitor thread.\n");
 	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);

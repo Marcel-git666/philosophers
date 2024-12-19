@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 21:11:56 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/18 16:33:20 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/19 20:27:00 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,4 +87,32 @@ char	*ft_itoa(int n)
 	result[i] = '\0';
 	ft_rev_char_tab(result, i);
 	return (result);
+}
+
+void	ft_itoa_to_str(long num, char *str)
+{
+	int		i;
+	int		is_negative;
+	char	temp[32];
+
+	is_negative = (num < 0);
+	if (is_negative)
+		num = -num;
+	i = 0;
+	if (num == 0)
+		temp[i++] = '0';
+	while (num > 0)
+	{
+		temp[i++] = (num % 10) + '0';
+		num /= 10;
+	}
+	if (is_negative)
+		temp[i++] = '-';
+	temp[i] = '\0';
+
+	// Reverse the string into `str`
+	int j = 0;
+	while (--i >= 0)
+		str[j++] = temp[i];
+	str[j] = '\0';
 }

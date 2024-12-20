@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 17:14:09 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/20 21:50:17 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,9 @@ static void	eat(t_philo *philo)
 	write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
 	safe_mutex_handle(&philo->second_fork->fork, LOCK);
 	write_status(TAKE_SECOND_FORK, philo, DEBUG_MODE);
+	safe_mutex_handle(&philo->philo_mutex, LOCK);
 	philo->meals_counter++;
+	safe_mutex_handle(&philo->philo_mutex, UNLOCK);
 	set_long(&philo->philo_mutex, &philo->last_meal_time,
 		get_time(MILLISECONDS));
 	write_status(EATING, philo, DEBUG_MODE);

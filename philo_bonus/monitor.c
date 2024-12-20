@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 16:23:55 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/17 16:23:42 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/19 21:03:23 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ void	monitor_dinner(void *data)
 	{
 		if (sem_trywait(table->death_sem) == 0)
 		{
+			safe_semaphore_handle(NULL, 0, SEM_WAIT, table->write_sem);
 			ft_printf("[MONITOR] A philosopher has died. Terminating program.\n");
+			safe_semaphore_handle(NULL, 0, SEM_POST, table->write_sem);
 			break;
 		}
 		if (sem_trywait(table->all_full_sem) == 0)
@@ -33,7 +35,9 @@ void	monitor_dinner(void *data)
 			full_count++;
 			if (full_count == table->nbr_philo)
 			{
+				safe_semaphore_handle(NULL, 0, SEM_WAIT, table->write_sem);
 				ft_printf("[MONITOR] All philosophers are full. Terminating program.\n");
+				safe_semaphore_handle(NULL, 0, SEM_POST, table->write_sem);
 				break;
 			}
 		}

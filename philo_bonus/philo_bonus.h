@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/17 11:53:55 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/19 20:48:12 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 # include <fcntl.h>
 # include <string.h>
 
-# define DEBUG_MODE 1
+# define DEBUG_MODE 0
 # define FORKS_SEM "/forks_sem"
 # define WRITE_SEM "/write_sem"
 # define START_SEM "/start_sem"

@@ -6,16 +6,11 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/17 16:19:27 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/19 20:47:50 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
-
-static void	think(t_philo *philo)
-{
-	write_status(THINKING, philo, DEBUG_MODE);
-}
 
 static void	*lone_philo(t_table *table)
 {
@@ -76,11 +71,16 @@ void	dinner_simulation(void *data)
 	while (true)
 	{
 		eat(philo);
+		safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, philo->table->write_sem);
 		if (philo->table->nbr_limit_meals > 0 && philo->meals_counter >= philo->table->nbr_limit_meals)
+		{
+			safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
 			break;
+		}
+		safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
 		write_status(SLEEPING, philo, DEBUG_MODE);
 		usleep(philo->table->time_to_sleep * 1000);
-		think(philo);
+		write_status(THINKING, philo, DEBUG_MODE);
 	}
 	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
 	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);

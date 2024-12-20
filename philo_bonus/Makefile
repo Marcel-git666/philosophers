@@ -6,13 +6,13 @@
 #    By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/03 16:05:35 by mmravec           #+#    #+#              #
-#    Updated: 2024/12/17 16:41:34 by mmravec          ###   ########.fr        #
+#    Updated: 2024/12/19 20:50:33 by mmravec          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo_bonus
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g
+CFLAGS = -Wall -Werror -Wextra -g -pthread -fsanitize=thread
 
 # Source files
 SRCS = main.c utils.c parse.c init.c safe_functions.c dinner.c write.c \

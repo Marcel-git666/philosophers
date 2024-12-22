@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 17:29:03 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/22 15:18:43 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_philo
 	t_fork *first_fork;
 	t_fork *second_fork;
 	pthread_t thread_id;
+	bool	isDead;
 	t_mtx philo_mutex;
 	t_table *table;
 } t_philo;

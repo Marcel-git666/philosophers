@@ -6,7 +6,7 @@
 #    By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/03 16:05:35 by mmravec           #+#    #+#              #
-#    Updated: 2024/12/20 21:51:04 by mmravec          ###   ########.fr        #
+#    Updated: 2024/12/22 12:45:14 by mmravec          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ CFLAGS = -Wall -Werror -Wextra -g -pthread -fsanitize=thread
 # Source files
 SRCS = main.c utils.c parse.c init.c safe_functions.c dinner.c write.c \
 	getters_setters.c synchro_utils.c ft_printf.c ft_printf_utils.c \
-	monitor.c
+	monitor.c deinit.c sleep.c
 
 OBJS = $(SRCS:.c=.o)
 

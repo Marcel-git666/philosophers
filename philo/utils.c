@@ -6,28 +6,11 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 16:45:23 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/22 12:45:39 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	clean(t_table *table)
-{
-	 t_philo	*philo;
-	int			i;
-
-	i = -1;
-	while (++i < table->nbr_philo)
-	{
-		philo = table->philos + i;
-		safe_mutex_handle(&philo->philo_mutex, DESTROY);
-	}
-	safe_mutex_handle(&table->table_mutex, DESTROY);
-	safe_mutex_handle(&table->write_mutex, DESTROY);
-	free(table->forks);
-	free(table->philos);
-}
 
 size_t	ft_strlen(const char *s)
 {
@@ -64,24 +47,3 @@ long	get_time(t_time_code time_code)
 	return (-1);
 }
 
-void	precise_usleep(long usec, t_table *table)
-{
-	long	start;
-	long	elapsed;
-	long	remaining;
-
-	start = get_time(MICROSECONDS);
-	while (get_time(MICROSECONDS) - start < usec)
-	{
-		if (table->is_finished)
-			break ;
-		elapsed = get_time(MICROSECONDS) - start;
-		remaining = usec - elapsed;
-		if (remaining > 1e3)
-			usleep(remaining / 2);
-		else
-			usleep(50);
-			// while (get_time(MICROSECONDS) - start < usec)
-			// 	;
-	}
-}

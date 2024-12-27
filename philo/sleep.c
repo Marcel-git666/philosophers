@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 12:45:04 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/22 15:34:04 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/27 22:32:44 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,10 @@ void	safe_sleep(t_philo *philo, long msec)
 		return ;
 	}
 	usleep(time_t_die * 1000);
-
+	philo->is_dead = true;
+	safe_mutex_handle(&philo->table->table_mutex, LOCK);
+	philo->table->is_philo_dead = true;
+	safe_mutex_handle(&philo->table->table_mutex, UNLOCK);
 }
 
 // void	precise_usleep(long usec, t_table *table)

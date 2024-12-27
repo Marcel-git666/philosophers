@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/22 15:18:43 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/23 18:15:52 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ typedef struct s_philo
 	t_fork *first_fork;
 	t_fork *second_fork;
 	pthread_t thread_id;
-	bool	isDead;
+	bool	is_dead;
 	t_mtx philo_mutex;
 	t_table *table;
 } t_philo;
@@ -57,6 +57,7 @@ struct s_table
 	long start_time;
 	bool is_finished;
 	bool are_threads_ready;
+	bool	is_philo_dead;
 	long threads_running_nbr;
 	pthread_t monitor;
 	t_mtx table_mutex;
@@ -106,7 +107,7 @@ void safe_mutex_handle(t_mtx *mutex, t_opcode opcode);
 void init_data(t_table *table);
 void dinner_start(t_table *table);
 void wait_all_threads(t_table *table);
-void precise_usleep(long usec, t_table *table);
+void	safe_sleep(t_philo *philo, long msec);
 void set_bool(t_mtx *mutex, bool *dest, bool value);
 bool get_bool(t_mtx *mutex, bool *value);
 void set_long(t_mtx *mutex, long *dest, long value);

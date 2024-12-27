@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/20 21:50:17 by mmravec          ###   ########.fr       */
+/*   Updated: 2024/12/27 22:33:48 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,6 @@ static void wait_for_priority(t_philo *philo) {
         }
         usleep(50); // Small wait to avoid busy looping
     }
-}
-
-static void	think(t_philo *philo)
-{
-	write_status(THINKING, philo, DEBUG_MODE);
-	usleep(50);
 }
 
 static void	*lone_philo(void *data)
@@ -74,8 +68,7 @@ static void	eat(t_philo *philo)
 	set_long(&philo->philo_mutex, &philo->last_meal_time,
 		get_time(MILLISECONDS));
 	write_status(EATING, philo, DEBUG_MODE);
-	usleep(philo->table->time_to_eat * 1000);
-	// precise_usleep(philo->table->time_to_eat * 1000, philo->table);
+	safe_sleep(philo, philo->table->time_to_eat);
 	if (philo->table->nbr_limit_meals > 0
 		&& philo->meals_counter == philo->table->nbr_limit_meals)
 		set_bool(&philo->philo_mutex, &philo->is_full, true);
@@ -100,17 +93,30 @@ void	*dinner_simulation(void *data)
 		// 1) am I full?
 		if (philo->is_full)
 			break;
+		if (philo->is_dead)
+		{
+			write_status(DIED, philo, DEBUG_MODE);
+			break;
+		}
 		// write_status(TEST, philo, DEBUG_MODE);
 		// 2) eat
 		eat(philo);
+		if (philo->is_dead)
+		{
+			write_status(DIED, philo, DEBUG_MODE);
+			break;
+		}
 		// 3) sleep -> write status
 		// write_status(TEST, philo, DEBUG_MODE);
 		write_status(SLEEPING, philo, DEBUG_MODE);
-		usleep(philo->table->time_to_sleep * 1000);
-		// precise_usleep(philo->table->time_to_sleep * 1000, philo->table);
-		// write_status(TEST, philo, DEBUG_MODE);
+		safe_sleep(philo, philo->table->time_to_sleep);
+		if (philo->is_dead)
+		{
+			write_status(DIED, philo, DEBUG_MODE);
+			break;
+		}
 		// 4) think
-		think(philo);
+		write_status(THINKING, philo, DEBUG_MODE);
 		// write_status(TEST, philo, DEBUG_MODE);
 	}
 	return (NULL);
@@ -134,12 +140,12 @@ void	dinner_start(t_table *table)
 			safe_thread_handle(&table->philos[i].thread_id, dinner_simulation,
 				&table->philos[i], CREATE);
 	}
-	safe_thread_handle(&table->monitor, monitor_dinner, table, CREATE);
+	// safe_thread_handle(&table->monitor, monitor_dinner, table, CREATE);
 	table->start_time = get_time(MILLISECONDS);
 	set_bool(&table->table_mutex, &table->are_threads_ready, true);
 	i = -1;
 	while (++i < table->nbr_philo)
 		safe_thread_handle(&table->philos[i].thread_id, NULL, NULL, JOIN);
 	set_bool(&table->table_mutex, &table->is_finished, true);
-	safe_thread_handle(&table->monitor, NULL, NULL, JOIN);
+	// safe_thread_handle(&table->monitor, NULL, NULL, JOIN);
 }

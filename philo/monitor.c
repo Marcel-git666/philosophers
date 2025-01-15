@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 16:23:55 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/12 16:11:51 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/14 20:01:55 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	*monitor_dinner(void *data)
 				return (NULL);
 			}
 		}
-		usleep(5);
+		// usleep(5);
 	}
 	return (NULL);
 }

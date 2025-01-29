@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/14 19:48:29 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/29 17:15:51 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,14 +98,13 @@ typedef enum e_status
 long	ft_atoi(const char *str);
 int		ft_printf(const char *format, ...);
 void	parse_input(t_table *table, char **argv);
-void	init_data(t_table *table);
-void	error_exit(const char *error);
+void	error_message(const char *error);
 long	get_time(t_time_code time_code);
 void	*safe_malloc(size_t bytes);
-void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
+bool	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
 			t_opcode opcode);
-void	safe_mutex_handle(t_mtx *mutex, t_opcode opcode);
-void	init_data(t_table *table);
+bool	safe_mutex_handle(t_mtx *mutex, t_opcode opcode);
+bool	init_data(t_table *table);
 void	dinner_start(t_table *table);
 void	wait_all_threads(t_table *table);
 void	safe_sleep(t_philo *philo, long msec);

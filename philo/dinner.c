@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/14 20:01:32 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/29 16:38:35 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ static void	*lone_philo(void *data)
 
 	philo = (t_philo *) data;
 	wait_all_threads(philo->table);
-	set_long(&philo->philo_mutex, &philo->last_meal_time, get_time(MILLISECONDS));
+	set_long(&philo->philo_mutex, &philo->last_meal_time,
+		get_time(MILLISECONDS));
 	increase_long(&philo->table->table_mutex,
 		&philo->table->threads_running_nbr);
 	write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
@@ -111,7 +112,9 @@ void	dinner_start(t_table *table)
 				&table->philos[i], CREATE);
 	}
 	safe_thread_handle(&table->monitor, monitor_dinner, table, CREATE);
+	safe_mutex_handle(&table->table_mutex, LOCK);
 	table->start_time = get_time(MILLISECONDS);
+	safe_mutex_handle(&table->table_mutex, UNLOCK);
 	set_bool(&table->table_mutex, &table->are_threads_ready, true);
 	i = -1;
 	while (++i < table->nbr_philo)

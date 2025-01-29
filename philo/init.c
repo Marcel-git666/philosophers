@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:50:14 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/23 18:16:45 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/29 17:23:16 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static void	assign_forks(t_philo *philo, t_fork *forks, int pos)
 	}
 }
 
-static void	init_philo(t_table *table)
+static bool	init_philo(t_table *table)
 {
 	int		i;
 	t_philo	*philo;
@@ -43,12 +43,17 @@ static void	init_philo(t_table *table)
 		philo->meals_counter = 0;
 		philo->is_dead = false;
 		philo->table = table;
-		safe_mutex_handle(&philo->philo_mutex, INIT);
+		if (!safe_mutex_handle(&philo->philo_mutex, INIT))
+		{
+			error_message("Failed to initialize philosopher mutex.");
+			return (false);
+		}
 		assign_forks(philo, table->forks, i);
 	}
+	return (true);
 }
 
-void	init_data(t_table *table)
+bool	init_data(t_table *table)
 {
 	int		i;
 
@@ -59,13 +64,20 @@ void	init_data(t_table *table)
 	table->is_philo_dead = false;
 	table->philos = safe_malloc(table->nbr_philo * sizeof(t_philo));
 	table->forks = safe_malloc(table->nbr_philo * sizeof(t_fork));
-	safe_mutex_handle(&table->table_mutex, INIT);
-	safe_mutex_handle(&table->write_mutex, INIT);
+	if (!table->philos || !table->forks)
+		return (false);
+	if (!safe_mutex_handle(&table->table_mutex, INIT) ||
+		!safe_mutex_handle(&table->write_mutex, INIT))
+		return (false);
+
 	while (i < table->nbr_philo)
 	{
-		safe_mutex_handle(&table->forks[i].fork, INIT);
+		if (!safe_mutex_handle(&table->forks[i].fork, INIT))
+			return (false);
 		table->forks[i].fork_id = i;
 		i++;
 	}
-	init_philo(table);
+	if (!init_philo(table))
+		return (false);
+	return (true);
 }

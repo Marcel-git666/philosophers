@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/22 12:45:39 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/29 16:51:27 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,11 @@ size_t	ft_strlen(const char *s)
 	return (len);
 }
 
-void	error_exit(const char *error)
+void	error_message(const char *error)
 {
 	write(2, "Error\n", 6);
 	write(2, error, ft_strlen(error));
 	write(2, "\n", 1);
-	exit(EXIT_FAILURE);
 }
 
 long	get_time(t_time_code time_code)
@@ -35,7 +34,7 @@ long	get_time(t_time_code time_code)
 	struct timeval	tv;
 
 	if (gettimeofday(&tv, NULL))
-		error_exit("Get time failure.");
+		error_message("Get time failure.");
 	if (time_code == SECONDS)
 		return (tv.tv_sec + tv.tv_usec / 1e6);
 	else if (time_code == MILLISECONDS)
@@ -43,7 +42,7 @@ long	get_time(t_time_code time_code)
 	else if (time_code == MICROSECONDS)
 		return (tv.tv_sec * 1e6 + tv.tv_sec);
 	else
-		error_exit("Wrong input for gettime.");
+		error_message("Wrong input for gettime.");
 	return (-1);
 }
 

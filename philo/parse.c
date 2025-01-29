@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:25:05 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 15:31:44 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/29 16:51:17 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	parse_input(t_table *table, char **argv)
 	if (argv[5]) {
 		table->nbr_limit_meals = ft_atoi(argv[5]);
 		if (table->nbr_limit_meals < 1)
-			error_exit("Last argument can't be lower than 1.");
+			error_message("Last argument can't be lower than 1.");
 	}
 	else
 		table->nbr_limit_meals = -1;

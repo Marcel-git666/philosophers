@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:35:51 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 17:28:47 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/29 17:48:38 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ void	write_status(t_philo_status status, t_philo *philo, bool debug)
 	long	elapsed;
 
 	elapsed = get_time(MILLISECONDS) - philo->table->start_time;
-	safe_mutex_handle(&philo->table->write_mutex, LOCK);
+	if (!safe_mutex_handle(&philo->table->write_mutex, LOCK))
+		return;
 	if (debug)
 		write_status_debug(status, philo, elapsed);
 	else
@@ -55,5 +56,6 @@ void	write_status(t_philo_status status, t_philo *philo, bool debug)
 		else if (status == DIED)
 			ft_printf("%l %d died\n", elapsed, philo->id);
 	}
-	safe_mutex_handle(&philo->table->write_mutex, UNLOCK);
+	if (!safe_mutex_handle(&philo->table->write_mutex, UNLOCK))
+		error_message("Failed to unlock write_mutex.");
 }

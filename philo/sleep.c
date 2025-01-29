@@ -6,13 +6,13 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 12:45:04 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/27 22:32:44 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/29 19:01:18 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	safe_sleep(t_philo *philo, long msec)
+bool	safe_sleep(t_philo *philo, long msec)
 {
 	long	start;
 	long	time_t_die;
@@ -22,13 +22,16 @@ void	safe_sleep(t_philo *philo, long msec)
 	if (time_t_die > msec)
 	{
 		usleep(msec * 1000);
-		return ;
+		return (true);
 	}
 	usleep(time_t_die * 1000);
 	philo->is_dead = true;
-	safe_mutex_handle(&philo->table->table_mutex, LOCK);
+	if (!safe_mutex_handle(&philo->table->table_mutex, LOCK))
+		return (false);
 	philo->table->is_philo_dead = true;
-	safe_mutex_handle(&philo->table->table_mutex, UNLOCK);
+	if (!safe_mutex_handle(&philo->table->table_mutex, UNLOCK))
+		error_message("Failed to unlock table_mutex in safe_sleep.");
+	return (false);
 }
 
 // void	precise_usleep(long usec, t_table *table)

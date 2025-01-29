@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 16:23:55 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/29 16:25:54 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/29 19:48:10 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,12 @@ static bool	philo_died(t_philo *philo)
 	if (get_bool(&philo->philo_mutex, &philo->is_full))
 		return (false);
 	current_time = get_time(MILLISECONDS);
-	last_meal_time = get_long(&philo->philo_mutex,
-			&philo->last_meal_time);
+	if (!get_long(&philo->philo_mutex, &philo->last_meal_time))
+		return (false);
+	last_meal_time = philo->last_meal_time;
 	t_t_die = philo->table->time_to_die;
+	if (last_meal_time == philo->table->start_time)
+		return (false);
 	if (current_time - last_meal_time > t_t_die)
 		return (true);
 	return (false);
@@ -45,12 +48,13 @@ void	*monitor_dinner(void *data)
 		{
 			if (philo_died(table->philos + i))
 			{
-				set_bool(&table->table_mutex, &table->is_finished, true);
+				if (!set_bool(&table->table_mutex, &table->is_finished, true))
+					return (NULL);
 				write_status(DIED, table->philos + i, DEBUG_MODE);
 				return (NULL);
 			}
 		}
-		usleep(5);
+		usleep(500);
 	}
 	return (NULL);
 }

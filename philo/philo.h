@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/29 17:15:51 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/29 19:23:39 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,17 +105,17 @@ bool	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
 			t_opcode opcode);
 bool	safe_mutex_handle(t_mtx *mutex, t_opcode opcode);
 bool	init_data(t_table *table);
-void	dinner_start(t_table *table);
+bool	dinner_start(t_table *table);
 void	wait_all_threads(t_table *table);
-void	safe_sleep(t_philo *philo, long msec);
-void	set_bool(t_mtx *mutex, bool *dest, bool value);
+bool	safe_sleep(t_philo *philo, long msec);
+bool	set_bool(t_mtx *mutex, bool *dest, bool value);
 bool	get_bool(t_mtx *mutex, bool *value);
-void	set_long(t_mtx *mutex, long *dest, long value);
+bool	set_long(t_mtx *mutex, long *dest, long value);
 long	get_long(t_mtx *mutex, long *value);
 bool	simulation_finished(t_table *table);
 void	write_status(t_philo_status status, t_philo *philo, bool debug);
 void	*monitor_dinner(void *data);
-void	increase_long(t_mtx *mutex, long *value);
+bool	increase_long(t_mtx *mutex, long *value);
 bool	all_threads_are_running(t_mtx *mutex, long *threads, long philo_nbr);
 void	clean(t_table *table);
 

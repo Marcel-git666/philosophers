@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/10 16:45:23 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/30 12:38:49 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	error_exit(const char *error)
 	write(2, "Error\n", 6);
 	write(2, error, ft_strlen(error));
 	write(2, "\n", 1);
-	exit(EXIT_FAILURE);
+	// exit(EXIT_FAILURE);
 }
 
 long	get_time(t_time_code time_code)
@@ -58,7 +58,7 @@ long	get_time(t_time_code time_code)
 	else if (time_code == MILLISECONDS)
 		return (tv.tv_sec * 1000 + tv.tv_usec / 1e3);
 	else if (time_code == MICROSECONDS)
-		return (tv.tv_sec * 1e6 + tv.tv_sec);
+		return (tv.tv_sec * 1e6 + tv.tv_usec);
 	else
 		error_exit("Wrong input for gettime.");
 	return (-1);

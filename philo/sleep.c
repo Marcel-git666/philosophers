@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 12:45:04 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/29 19:01:18 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/30 08:13:08 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,33 @@
 bool	safe_sleep(t_philo *philo, long msec)
 {
 	long	start;
-	long	time_t_die;
+	long	elapsed;
+	long	check_interval;
 
 	start = get_time(MILLISECONDS);
-	time_t_die = (*philo).last_meal_time + (*philo).table->time_to_die - start;
-	if (time_t_die > msec)
+	elapsed = 0;
+	check_interval = 1000; // Kontrola každou 1 ms
+
+	while (elapsed < msec)
 	{
-		usleep(msec * 1000);
-		return (true);
+		if (get_bool(&philo->table->table_mutex, &philo->table->is_finished))  // 💡 Okamžité ukončení
+			return (false);
+
+		elapsed = get_time(MILLISECONDS) - start;
+
+		// Kontrola, zda filozof neumřel
+		if (get_time(MILLISECONDS) - get_long(&philo->philo_mutex, &philo->last_meal_time) > philo->table->time_to_die)
+		{
+			set_bool(&philo->philo_mutex, &philo->is_dead, true);
+			set_bool(&philo->table->table_mutex, &philo->table->is_finished, true);
+			return (false);
+		}
+
+		usleep(check_interval);
 	}
-	usleep(time_t_die * 1000);
-	philo->is_dead = true;
-	if (!safe_mutex_handle(&philo->table->table_mutex, LOCK))
-		return (false);
-	philo->table->is_philo_dead = true;
-	if (!safe_mutex_handle(&philo->table->table_mutex, UNLOCK))
-		error_message("Failed to unlock table_mutex in safe_sleep.");
-	return (false);
+	return (true);
 }
+
 
 // void	precise_usleep(long usec, t_table *table)
 // {

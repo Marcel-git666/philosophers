@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/29 19:23:39 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/30 12:26:58 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <stdbool.h>
 # include <limits.h>
 
-# define DEBUG_MODE 0
+# define DEBUG_MODE 1
 
 typedef struct s_table t_table;
 
@@ -101,16 +101,16 @@ void	parse_input(t_table *table, char **argv);
 void	error_message(const char *error);
 long	get_time(t_time_code time_code);
 void	*safe_malloc(size_t bytes);
-bool	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
+void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
 			t_opcode opcode);
-bool	safe_mutex_handle(t_mtx *mutex, t_opcode opcode);
+void	safe_mutex_handle(t_mtx *mutex, t_opcode opcode);
 bool	init_data(t_table *table);
 bool	dinner_start(t_table *table);
 void	wait_all_threads(t_table *table);
 bool	safe_sleep(t_philo *philo, long msec);
-bool	set_bool(t_mtx *mutex, bool *dest, bool value);
+void	set_bool(t_mtx *mutex, bool *dest, bool value);
 bool	get_bool(t_mtx *mutex, bool *value);
-bool	set_long(t_mtx *mutex, long *dest, long value);
+void	set_long(t_mtx *mutex, long *dest, long value);
 long	get_long(t_mtx *mutex, long *value);
 bool	simulation_finished(t_table *table);
 void	write_status(t_philo_status status, t_philo *philo, bool debug);

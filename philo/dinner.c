@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/29 19:41:30 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/30 10:50:53 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,15 +48,9 @@ static void	eat(t_philo *philo)
 		return ;
 	}
 	philo->meals_counter++;
-	safe_mutex_handle(&philo->philo_mutex, UNLOCK);
-	if (!safe_mutex_handle(&philo->philo_mutex, LOCK))
-	{
-		safe_mutex_handle(&philo->first_fork->fork, UNLOCK);
-		safe_mutex_handle(&philo->second_fork->fork, UNLOCK);
-		return ;
-	}
 	philo->last_meal_time = get_time(MILLISECONDS);
 	safe_mutex_handle(&philo->philo_mutex, UNLOCK);
+	ft_printf("New last meal time: %l for philo[%d].\n", philo->last_meal_time-philo->table->start_time, philo->id);
 	write_status(EATING, philo, DEBUG_MODE);
 	if (!safe_sleep(philo, philo->table->time_to_eat))
 	{
@@ -77,12 +71,10 @@ void	*dinner_simulation(void *data)
 
 	philo = (t_philo *) data;
 	wait_all_threads(philo->table);
-	if (!set_long(&philo->philo_mutex, &philo->last_meal_time,
-			get_time(MILLISECONDS)))
-		return (NULL);
-	if (!increase_long(&philo->table->table_mutex,
-			&philo->table->threads_running_nbr))
-		return (NULL);
+	set_long(&philo->philo_mutex, &philo->last_meal_time,
+			get_time(MILLISECONDS));
+	increase_long(&philo->table->table_mutex,
+			&philo->table->threads_running_nbr);
 	if (philo->id % 2 == 0)
 		usleep(100);
 	while (!simulation_finished(philo->table))
@@ -138,27 +130,20 @@ bool	dinner_start(t_table *table)
 	if (!safe_mutex_handle(&table->table_mutex, LOCK))
 		return (false);
 	table->start_time = get_time(MILLISECONDS);
+	i = -1;
 	while (++i < table->nbr_philo)
-	{
-		if (!set_long(&table->philos[i].philo_mutex,
-				&table->philos[i].last_meal_time, table->start_time))
-		{
-			safe_mutex_handle(&table->table_mutex, UNLOCK);
-			return (false);
-		}
-	}
+		set_long(&table->philos[i].philo_mutex,
+			&table->philos[i].last_meal_time, table->start_time);
 	if (!safe_mutex_handle(&table->table_mutex, UNLOCK))
 		return (false);
-	if (!set_bool(&table->table_mutex, &table->are_threads_ready, true))
-		return (false);
+	set_bool(&table->table_mutex, &table->are_threads_ready, true);
 	i = -1;
 	while (++i < table->nbr_philo)
 	{
 		if (!safe_thread_handle(&table->philos[i].thread_id, NULL, NULL, JOIN))
 			return (false);
 	}
-	if (!set_bool(&table->table_mutex, &table->is_finished, true))
-		return (false);
+	set_bool(&table->table_mutex, &table->is_finished, true);
 	if (!safe_thread_handle(&table->monitor, NULL, NULL, JOIN))
 		return (false);
 	return (true);

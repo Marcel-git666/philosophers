@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 16:23:55 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/29 19:48:10 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/30 10:21:20 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,18 @@ static bool	philo_died(t_philo *philo)
 	long	current_time;
 	long	t_t_die;
 
+	if (get_bool(&philo->table->table_mutex, &philo->table->is_finished))
+		return (false);
 	if (get_bool(&philo->philo_mutex, &philo->is_full))
 		return (false);
 	current_time = get_time(MILLISECONDS);
-	if (!get_long(&philo->philo_mutex, &philo->last_meal_time))
+	last_meal_time = get_long(&philo->philo_mutex, &philo->last_meal_time);
+	if (last_meal_time == 0)
 		return (false);
-	last_meal_time = philo->last_meal_time;
 	t_t_die = philo->table->time_to_die;
+	if (current_time % 10 == 0)
+		ft_printf("Philo %d checking death: last meal %l, current %l, time_to_die %l\n",
+			philo->id, last_meal_time - philo->table->start_time, current_time - philo->table->start_time, t_t_die);
 	if (last_meal_time == philo->table->start_time)
 		return (false);
 	if (current_time - last_meal_time > t_t_die)
@@ -48,8 +53,8 @@ void	*monitor_dinner(void *data)
 		{
 			if (philo_died(table->philos + i))
 			{
-				if (!set_bool(&table->table_mutex, &table->is_finished, true))
-					return (NULL);
+				ft_printf("Philo %d has died. Stopping simulation...\n", table->philos[i].id);
+				set_bool(&table->table_mutex, &table->is_finished, true);
 				write_status(DIED, table->philos + i, DEBUG_MODE);
 				return (NULL);
 			}

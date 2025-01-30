@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:35:51 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/29 17:48:38 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/01/30 08:31:19 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,10 @@ static void	write_status_debug(t_philo_status status, t_philo *philo,
 	else if (status == THINKING && !simulation_finished(philo->table))
 		ft_printf("%l ms Philo: %d is thinking.\n", elapsed, philo->id);
 	else if (status == DIED)
+	{
 		ft_printf("%l ms Philo: %d has died.\n", elapsed, philo->id);
+		ft_printf("Last meal time was: %l ms\n", philo->last_meal_time - philo->table->start_time);
+	}
 }
 
 void	write_status(t_philo_status status, t_philo *philo, bool debug)

@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/02 15:46:17 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/02 17:21:35 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,11 @@
 
 static void	think(t_philo *philo)
 {
-	long	think_time;
+	long	think_delay;
+
 	write_status(THINKING, philo, DEBUG_MODE);
-	think_time = philo->table->time_to_eat * 2 - philo->table->time_to_sleep;
-	if (philo->id % 2)
-		return ;
-	usleep(1000 * (think_time * 0.5));
+	think_delay = 1;
+	precise_usleep(1000 * think_delay, philo->table);
 }
 
 static void	*lone_philo(void *data)
@@ -35,7 +34,7 @@ static void	*lone_philo(void *data)
 	write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
 	while (!simulation_finished(philo->table))
 	{
-		usleep(200);
+		usleep(1000);
 	}
 	return (NULL);
 }
@@ -52,7 +51,7 @@ static void	eat(t_philo *philo)
 	set_long(&philo->philo_mutex, &philo->last_meal_time,
 		get_time(MILLISECONDS));
 	write_status(EATING, philo, DEBUG_MODE);
-	usleep(philo->table->time_to_eat * 1000);
+	precise_usleep(philo->table->time_to_eat * 1000, philo->table);
 	if (philo->table->nbr_limit_meals > 0
 		&& philo->meals_counter == philo->table->nbr_limit_meals)
 		set_bool(&philo->philo_mutex, &philo->is_full, true);
@@ -70,25 +69,14 @@ void	*dinner_simulation(void *data)
 		get_time(MILLISECONDS));
 	increase_long(&philo->table->table_mutex,
 		&philo->table->threads_running_nbr);
-	if (philo->id % 2 == 0)
-		usleep(100);
 	while (!simulation_finished(philo->table))
 	{
-		// 1) am I full?
 		if (philo->is_full)
-			break;
-		// write_status(TEST, philo, DEBUG_MODE);
-		// 2) eat
+			break ;
 		eat(philo);
-		// 3) sleep -> write status
-		// write_status(TEST, philo, DEBUG_MODE);
 		write_status(SLEEPING, philo, DEBUG_MODE);
-		usleep(philo->table->time_to_sleep * 1000);
-		// precise_usleep(philo->table->time_to_sleep * 1000, philo->table);
-		// write_status(TEST, philo, DEBUG_MODE);
-		// 4) think
+		precise_usleep(philo->table->time_to_sleep * 1000, philo->table);
 		think(philo);
-		// write_status(TEST, philo, DEBUG_MODE);
 	}
 	return (NULL);
 }

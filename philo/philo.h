@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/30 12:43:27 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/02 16:25:51 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <stdbool.h>
 # include <limits.h>
 
-# define DEBUG_MODE 0
+# define DEBUG_MODE 1
 
 typedef struct s_table	t_table;
 

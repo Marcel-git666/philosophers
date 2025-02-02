@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/30 12:37:54 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/02 15:46:17 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,12 @@
 
 static void	think(t_philo *philo)
 {
+	long	think_time;
 	write_status(THINKING, philo, DEBUG_MODE);
-	usleep(50);
+	think_time = philo->table->time_to_eat * 2 - philo->table->time_to_sleep;
+	if (philo->id % 2)
+		return ;
+	usleep(1000 * (think_time * 0.5));
 }
 
 static void	*lone_philo(void *data)

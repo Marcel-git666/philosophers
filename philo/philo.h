@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/02 17:40:37 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/03 09:09:23 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ typedef enum e_status
 
 long	ft_atoi(const char *str);
 int		ft_printf(const char *format, ...);
-void	parse_input(t_table *table, char **argv);
+bool	parse_input(t_table *table, char **argv);
 void	init_data(t_table *table);
 void	error_exit(const char *error);
 long	get_time(t_time_code time_code);

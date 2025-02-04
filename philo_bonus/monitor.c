@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 16:23:55 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/19 21:03:23 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/04 08:48:35 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,37 +15,18 @@
 void	monitor_dinner(void *data)
 {
 	t_table	*table;
-	int		full_count;
 	int		i;
 
 	table = (t_table *)data;
 	i = -1;
-	full_count = 0;
-	while (true)
-	{
-		if (sem_trywait(table->death_sem) == 0)
-		{
-			safe_semaphore_handle(NULL, 0, SEM_WAIT, table->write_sem);
-			ft_printf("[MONITOR] A philosopher has died. Terminating program.\n");
-			safe_semaphore_handle(NULL, 0, SEM_POST, table->write_sem);
-			break;
-		}
-		if (sem_trywait(table->all_full_sem) == 0)
-		{
-			full_count++;
-			if (full_count == table->nbr_philo)
-			{
-				safe_semaphore_handle(NULL, 0, SEM_WAIT, table->write_sem);
-				ft_printf("[MONITOR] All philosophers are full. Terminating program.\n");
-				safe_semaphore_handle(NULL, 0, SEM_POST, table->write_sem);
-				break;
-			}
-		}
-		usleep(1000);
-	}
+	sem_wait(table->death_sem);
+
+	safe_semaphore_handle(NULL, 0, SEM_WAIT, table->write_sem);
+	ft_printf("[MONITOR] A philosopher has died. Terminating program.\n");
+	safe_semaphore_handle(NULL, 0, SEM_POST, table->write_sem);
 	while (++i < table->nbr_philo)
 	{
-		// kill(table->philos[i].process_id, SIGKILL);
+		kill(table->philos[i].process_id, SIGKILL);
 	}
 	exit(0);
 }
@@ -60,7 +41,10 @@ void	*monitor_thread(void *data)
 	while (true)
 	{
 		safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->write_sem);
-		current_time = get_time(MILLISECONDS) - philo->table->start_time;
+		current_time = get_time(MILLISECONDS);
+		// ft_printf("[DEBUG] Philo %d: current_time=%l, last_meal_time=%l, diff=%l, time_to_die=%l\n",
+		// 	philo->id, current_time, philo->last_meal_time, current_time - philo->last_meal_time, philo->table->time_to_die);
+
 		if (current_time - philo->last_meal_time > philo->table->time_to_die)
 		{
 			safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->write_sem);
@@ -70,7 +54,8 @@ void	*monitor_thread(void *data)
 		}
 		if (philo->table->nbr_limit_meals > 0 && philo->meals_counter >= philo->table->nbr_limit_meals)
 		{
-			ft_printf("[MONITOR THREAD] %l ms: Philosopher %d is full.\n", current_time, philo->id);
+			ft_printf("[MONITOR THREAD] %l ms: Philosopher %d is full.\n",
+				current_time - philo->table->start_time, philo->id);
 			safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->write_sem);
 			safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->all_full_sem);
 			return (NULL);

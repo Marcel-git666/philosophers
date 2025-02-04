@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/19 20:48:12 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/04 08:58:47 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ sem_t	*safe_semaphore_handle(const char *name, int initial_value,
 void	safe_process_handle(pid_t *process_id, void *data, void (*f)(void *),
 			t_opcode opcode);
 void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
-	t_opcode opcode);
+			t_opcode opcode);
 void	dinner_start(t_table *table);
 void	precise_usleep(long usec, t_table *table);
 

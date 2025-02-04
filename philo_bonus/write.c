@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:35:51 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/12 19:06:22 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/04 09:03:56 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@ static void	write_status_debug(t_philo_status status, t_philo *philo,
 	else if (status == TAKE_SECOND_FORK)
 		ft_printf("%l ms Philo: %d has taken a fork.\n", elapsed, philo->id);
 	else if (status == EATING)
-		ft_printf("%l ms Philo: %d is eating for %l ms \t\t\t Meal number: %l.\n",
-			elapsed, philo->id, philo->table->time_to_eat, philo->meals_counter);
+		ft_printf("%l ms Philo: %d is eating for %l ms \t\t\t Meal number: %l"
+			".\n", elapsed, philo->id, philo->table->time_to_eat,
+			philo->meals_counter);
 	else if (status == SLEEPING)
-		ft_printf("%l ms Philo: %d is sleeping for %l ms.\n", elapsed, philo->id,
-			philo->table->time_to_sleep);
+		ft_printf("%l ms Philo: %d is sleeping for %l ms.\n", elapsed,
+			philo->id, philo->table->time_to_sleep);
 	else if (status == THINKING)
 		ft_printf("%l ms Philo: %d is thinking.\n", elapsed, philo->id);
 	else if (status == DIED)

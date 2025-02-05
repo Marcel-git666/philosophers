@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 16:23:55 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/05 15:37:50 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/05 19:46:15 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	monitor_dinner(void *data)
 	long	current_time;
 
 	table = (t_table *)data;
+	sem_wait(table->death_sem); 
 	while (true)
 	{
 		usleep(1000);

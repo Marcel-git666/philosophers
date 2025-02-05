@@ -6,11 +6,18 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/05 19:09:17 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/05 21:56:17 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+// static bool	is_philosopher_dead(t_philo *philo)
+// {
+// 	if (sem_trywait(philo->table->death_sem) == 0)
+// 		return (true);
+// 	return (false);
+// }
 
 static void	eat(t_philo *philo)
 {
@@ -68,8 +75,8 @@ void	dinner_start(t_table *table)
 {
 	int		i;
 
-	table->start_time = get_time(MILLISECONDS);
 	safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, table->write_sem);
+	table->start_time = get_time(MILLISECONDS);
 	ft_printf("[DEBUG] Start time: %l\n", table->start_time);
 	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, table->write_sem);
 	i = -1;

@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:55:05 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/17 12:45:42 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/05 12:10:04 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,56 +22,44 @@ void	*safe_malloc(size_t bytes)
 	return (ret);
 }
 
+static sem_t	*safe_semaphore_open(const char *name, int initial_value)
+{
+	sem_t	*sem;
+
+	sem = sem_open(name, O_CREAT | O_EXCL, 0644, initial_value);
+	if (sem == SEM_FAILED && errno == EEXIST)
+	{
+		sem_unlink(name);
+		sem = sem_open(name, O_CREAT | O_EXCL, 0644, initial_value);
+		if (sem == SEM_FAILED)
+			error_exit("Semaphore open error after unlink");
+	}
+	else if (sem == SEM_FAILED)
+		error_exit("Semaphore open error");
+	return (sem);
+}
+
+static void	safe_semaphore_op(t_sem_opcode opcode, sem_t *sem, const char *name)
+{
+	if ((opcode == SEM_WAIT && sem_wait(sem) == -1)
+		|| (opcode == SEM_POST && sem_post(sem) == -1)
+		|| (opcode == SEM_CLOSE && sem_close(sem) == -1)
+		|| (opcode == SEM_UNLINK && sem_unlink(name) == -1))
+	{
+		ft_printf("Semaphore operation error: %s (OP: %d, ERR: %s)\n",
+			name ? name : "Unnamed", opcode, strerror(errno));
+		error_exit("Semaphore operation error");
+	}
+
+}
+
 sem_t	*safe_semaphore_handle(const char *name, int initial_value,
 			t_sem_opcode opcode, sem_t *sem)
 {
-	sem_t	*ret;
-
-	ret = NULL;
 	if (opcode == SEM_OPEN)
-	{
-		ret = sem_open(name, O_CREAT | O_EXCL, 0644, initial_value);
-		if (ret == SEM_FAILED)
-		{
-			if (errno == EEXIST) // Semaphore exists
-			{
-				sem_unlink(name); // Unlink and retry
-				ret = sem_open(name, O_CREAT | O_EXCL, 0644, initial_value);
-				if (ret == SEM_FAILED)
-					error_exit("Semaphore open error after unlink");
-			}
-			else
-			{
-				error_exit("Semaphore open error");
-			}
-		}
-		// ft_printf("Opened named semaphore: %s\n", name);
-	}
-	else if (opcode == SEM_WAIT)
-	{
-		// ft_printf("Process %d waiting on semaphore: %s\n", getpid(), name ? name : "Unnamed");
-		if (sem_wait(sem) == -1)
-			error_exit("Semaphore wait error");
-	}
-	else if (opcode == SEM_POST)
-	{
-		// ft_printf("Process %d posting to semaphore: %s\n", getpid(), name ? name : "Unnamed");
-		if (sem_post(sem) == -1)
-			error_exit("Semaphore post error");
-	}
-	else if (opcode == SEM_CLOSE)
-	{
-		if (sem_close(sem) == -1)
-			error_exit("Semaphore close error");
-	}
-	else if (opcode == SEM_UNLINK)
-	{
-		if (sem_unlink(name) == -1)
-			error_exit("Semaphore unlink error");
-	}
-	else
-		error_exit("Invalid semaphore operation.\n");
-	return (ret);
+		return (safe_semaphore_open(name, initial_value));
+	safe_semaphore_op(opcode, sem, name);
+	return (NULL);
 }
 
 void	safe_process_handle(pid_t *process_id, void *data, void (*f)(void *),
@@ -128,7 +116,7 @@ static void	handle_pthread_error(int status, t_opcode opcode)
 }
 
 void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
-	t_opcode opcode)
+			t_opcode opcode)
 {
 	if (opcode == CREATE)
 		handle_pthread_error(pthread_create(thread, NULL, f, data), opcode);

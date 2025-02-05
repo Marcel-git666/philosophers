@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 16:23:55 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/04 08:56:50 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/05 15:37:50 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,51 +16,46 @@ void	monitor_dinner(void *data)
 {
 	t_table	*table;
 	int		i;
-
-	table = (t_table *)data;
-	i = -1;
-	sem_wait(table->death_sem);
-
-	safe_semaphore_handle(NULL, 0, SEM_WAIT, table->write_sem);
-	ft_printf("[MONITOR] A philosopher has died. Terminating program.\n");
-	safe_semaphore_handle(NULL, 0, SEM_POST, table->write_sem);
-	while (++i < table->nbr_philo)
-	{
-		kill(table->philos[i].process_id, SIGKILL);
-	}
-	exit(0);
-}
-
-
-void	*monitor_thread(void *data)
-{
-	t_philo	*philo;
 	long	current_time;
 
-	philo = (t_philo *)data;
+	table = (t_table *)data;
 	while (true)
 	{
-		safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->write_sem);
-		current_time = get_time(MILLISECONDS);
-		if (current_time - philo->last_meal_time > philo->table->time_to_die)
+		usleep(1000);
+		// ✅ Check for death
+		i = -1;
+		while (++i < table->nbr_philo)
 		{
-			safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->write_sem);
-			write_status(DIED, philo, DEBUG_MODE);
-			safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->death_sem);
-			return (NULL);
+			safe_semaphore_handle(NULL, 0, SEM_WAIT, table->philos[i].last_meal_sem);
+			current_time = get_time(MILLISECONDS);
+			if (current_time - table->philos[i].last_meal_time >= table->time_to_die)
+			{
+				safe_semaphore_handle(NULL, 0, SEM_POST, table->philos[i].last_meal_sem);
+				write_status(DIED, &table->philos[i], DEBUG_MODE);
+				safe_semaphore_handle(NULL, 0, SEM_POST, table->death_sem);
+				return;
+			}
+			safe_semaphore_handle(NULL, 0, SEM_POST, table->philos[i].last_meal_sem);
 		}
-		if (philo->table->nbr_limit_meals > 0 && philo->meals_counter
-			>= philo->table->nbr_limit_meals)
+
+		// ✅ Check if all philosophers have eaten required meals
+		i = -1;
+		while (++i < table->nbr_philo)
 		{
-			ft_printf("[MONITOR THREAD] %l ms: Philosopher %d is full.\n",
-				current_time - philo->table->start_time, philo->id);
-			safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->write_sem);
-			safe_semaphore_handle(NULL, 0, SEM_POST,
-				philo->table->all_full_sem);
-			return (NULL);
+			safe_semaphore_handle(NULL, 0, SEM_WAIT, table->philos[i].last_meal_sem);
+			if (table->nbr_limit_meals > 0 && table->philos[i].meals_counter < table->nbr_limit_meals)
+			{
+				safe_semaphore_handle(NULL, 0, SEM_POST, table->philos[i].last_meal_sem);
+				break;
+			}
+			safe_semaphore_handle(NULL, 0, SEM_POST, table->philos[i].last_meal_sem);
 		}
-		safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->write_sem);
-		usleep(500);
+		if (i == table->nbr_philo) // ✅ If all philosophers have eaten enough
+		{
+			safe_semaphore_handle(NULL, 0, SEM_POST, table->all_full_sem);
+			exit(0);
+		}
+		safe_semaphore_handle(NULL, 0, SEM_POST, table->death_sem);
+		exit(0);
 	}
-	return (NULL);
 }

@@ -6,26 +6,11 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/03 15:12:23 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/05 16:35:29 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
-
-void	clean(t_table *table)
-{
-	safe_semaphore_handle(FORKS_SEM, 0, SEM_UNLINK, NULL);
-	safe_semaphore_handle(WRITE_SEM, 0, SEM_UNLINK, NULL);
-	safe_semaphore_handle(START_SEM, 0, SEM_UNLINK, NULL);
-	safe_semaphore_handle(DEATH_SEM, 0, SEM_UNLINK, NULL);
-	safe_semaphore_handle(ALL_FULL_SEM, 0, SEM_UNLINK, NULL);
-	safe_semaphore_handle(FORKS_SEM, 0, SEM_CLOSE, table->forks);
-	safe_semaphore_handle(WRITE_SEM, 0, SEM_CLOSE, table->write_sem);
-	safe_semaphore_handle(START_SEM, 0, SEM_CLOSE, table->start_sem);
-	safe_semaphore_handle(DEATH_SEM, 0, SEM_CLOSE, table->death_sem);
-	safe_semaphore_handle(ALL_FULL_SEM, 0, SEM_CLOSE, table->all_full_sem);
-	free(table->philos);
-}
 
 size_t	ft_strlen(const char *s)
 {
@@ -56,7 +41,7 @@ long	get_time(t_time_code time_code)
 	else if (time_code == MILLISECONDS)
 		return (tv.tv_sec * 1000 + tv.tv_usec / 1e3);
 	else if (time_code == MICROSECONDS)
-		return (tv.tv_sec * 1e6 + tv.tv_sec);
+		return (tv.tv_sec * 1e6 + tv.tv_usec);
 	else
 		error_exit("Wrong input for gettime.");
 	return (-1);

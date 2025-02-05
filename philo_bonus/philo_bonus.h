@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/04 08:58:47 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/05 19:10:50 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,13 @@
 # include <fcntl.h>
 # include <string.h>
 
-# define DEBUG_MODE 0
+# define DEBUG_MODE 1
 # define FORKS_SEM "/forks_sem"
 # define WRITE_SEM "/write_sem"
 # define START_SEM "/start_sem"
 # define DEATH_SEM "/death_sem"
 # define ALL_FULL_SEM "/all_full_sem"
+# define START_TIME_SEM "/start_time_sem"
 
 typedef struct s_table t_table;
 
@@ -43,6 +44,7 @@ typedef struct s_philo
 	int		id;
 	long	meals_counter;
 	long	last_meal_time;
+	sem_t	*last_meal_sem;
 	pid_t	process_id;
 	t_table	*table;
 }		t_philo;
@@ -61,6 +63,7 @@ struct s_table
 	sem_t	*write_sem;
 	sem_t	*forks;
 	sem_t	*start_sem;
+	sem_t	*start_time_sem;
 	t_philo	*philos;
 };
 
@@ -118,7 +121,8 @@ void	precise_usleep(long usec, t_table *table);
 bool	simulation_finished(t_table *table);
 void	write_status(t_philo_status status, t_philo *philo, bool debug);
 void	monitor_dinner(void *data);
-void	*monitor_thread(void *data);
+// void	*monitor_thread(void *data);
+void	create_last_meal_sem_name(char *buffer, int id);
 void	clean(t_table *table);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:50:14 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/17 12:45:03 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/06 08:55:49 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	init_data(t_table *table)
 	table->write_sem = safe_semaphore_handle(WRITE_SEM, 1, SEM_OPEN, NULL);
 	table->start_sem = safe_semaphore_handle(START_SEM, 0, SEM_OPEN, NULL);
 	table->death_sem = safe_semaphore_handle(DEATH_SEM, 0, SEM_OPEN, NULL);
-	table->all_full_sem = safe_semaphore_handle(ALL_FULL_SEM, 0, SEM_OPEN, NULL);
+	table->all_full_sem = safe_semaphore_handle(ALL_FULL_SEM,
+			0, SEM_OPEN, NULL);
 	init_philo(table);
 }

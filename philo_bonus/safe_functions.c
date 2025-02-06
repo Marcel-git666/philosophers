@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:55:05 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/06 08:31:25 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/06 08:49:19 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,53 +22,41 @@ void	*safe_malloc(size_t bytes)
 	return (ret);
 }
 
+static sem_t	*safe_semaphore_open(const char *name, int initial_value)
+{
+	sem_t	*sem;
+
+	sem = sem_open(name, O_CREAT | O_EXCL, 0644, initial_value);
+	if (sem == SEM_FAILED && errno == EEXIST)
+	{
+		sem_unlink(name);
+		sem = sem_open(name, O_CREAT | O_EXCL, 0644, initial_value);
+		if (sem == SEM_FAILED)
+			error_exit("Semaphore open error after unlink");
+	}
+	else if (sem == SEM_FAILED)
+		error_exit("Semaphore open error");
+	return (sem);
+}
+
+static void	safe_semaphore_op(t_sem_opcode opcode, sem_t *sem, const char *name)
+{
+	if ((opcode == SEM_WAIT && sem_wait(sem) == -1)
+		|| (opcode == SEM_POST && sem_post(sem) == -1)
+		|| (opcode == SEM_CLOSE && sem_close(sem) == -1)
+		|| (opcode == SEM_UNLINK && sem_unlink(name) == -1))
+	{
+		error_exit("Semaphore operation error");
+	}
+}
+
 sem_t	*safe_semaphore_handle(const char *name, int initial_value,
 			t_sem_opcode opcode, sem_t *sem)
 {
-	sem_t	*ret;
-
-	ret = NULL;
 	if (opcode == SEM_OPEN)
-	{
-		ret = sem_open(name, O_CREAT | O_EXCL, 0644, initial_value);
-		if (ret == SEM_FAILED)
-		{
-			if (errno == EEXIST) // Semaphore exists
-			{
-				sem_unlink(name); // Unlink and retry
-				ret = sem_open(name, O_CREAT | O_EXCL, 0644, initial_value);
-				if (ret == SEM_FAILED)
-					error_exit("Semaphore open error after unlink");
-			}
-			else
-			{
-				error_exit("Semaphore open error");
-			}
-		}
-	}
-	else if (opcode == SEM_WAIT)
-	{
-		if (sem_wait(sem) == -1)
-			error_exit("Semaphore wait error");
-	}
-	else if (opcode == SEM_POST)
-	{
-		if (sem_post(sem) == -1)
-			error_exit("Semaphore post error");
-	}
-	else if (opcode == SEM_CLOSE)
-	{
-		if (sem_close(sem) == -1)
-			error_exit("Semaphore close error");
-	}
-	else if (opcode == SEM_UNLINK)
-	{
-		if (sem_unlink(name) == -1)
-			error_exit("Semaphore unlink error");
-	}
-	else
-		error_exit("Invalid semaphore operation.\n");
-	return (ret);
+		return (safe_semaphore_open(name, initial_value));
+	safe_semaphore_op(opcode, sem, name);
+	return (NULL);
 }
 
 void	safe_process_handle(pid_t *process_id, void *data, void (*f)(void *),
@@ -97,42 +85,4 @@ void	safe_process_handle(pid_t *process_id, void *data, void (*f)(void *),
 	}
 	else
 		error_exit("Invalid process operation.");
-}
-
-
-static void	handle_pthread_error(int status, t_opcode opcode)
-{
-	if (status == 0)
-		return ;
-	if (status == EAGAIN)
-		error_exit("The system lacked the necessary resources to create another"
-			" thread, or the system-imposed limit on the total number of "
-			"threads in a process [PTHREAD_THREADS_MAX] would be exceeded.");
-	else if (status == EPERM)
-		error_exit("The caller does not have appropriate permission to set the"
-			" required scheduling parameters or scheduling policy.");
-	else if (status == EINVAL && opcode == CREATE)
-		error_exit("The value specified by attr is invalid.");
-	else if (status == EINVAL && (opcode == JOIN || opcode == DETACH))
-		error_exit("The implementation has detected that the value specified by"
-			" thread does not refer to a joinable thread.");
-	else if (status == ESRCH)
-		error_exit("No thread could be found corresponding to that specified by"
-			" the given thread ID, thread.");
-	else if (status == EDEADLK)
-		error_exit("A deadlock was detected or the value of thread specifies"
-			" the calling thread.");
-}
-
-void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
-	t_opcode opcode)
-{
-	if (opcode == CREATE)
-		handle_pthread_error(pthread_create(thread, NULL, f, data), opcode);
-	else if (opcode == JOIN)
-		handle_pthread_error(pthread_join(*thread, NULL), opcode);
-	else if (opcode == DETACH)
-		handle_pthread_error(pthread_detach(*thread), opcode);
-	else
-		error_exit("Wrong opcode, use CREATE, JOIN or DETACH");
 }

@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/06 08:29:05 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/06 08:56:35 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ void	dinner_simulation(void *data)
 	}
 	cleanup_and_exit(philo, &monitor_tid);
 }
-
 
 void	dinner_start(t_table *table)
 {

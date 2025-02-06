@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 08:28:50 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/06 08:29:39 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/06 08:56:15 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,3 @@ void	eat(t_philo *philo)
 	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
 	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
 }
-
-

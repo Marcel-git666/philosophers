@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:25:05 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/17 11:30:47 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/06 08:56:52 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ long	ft_atoi(const char *str)
 void	parse_input(t_table *table, char **argv)
 {
 	table->nbr_philo = ft_atoi(argv[1]);
-	// ft_printf("Nbr: %l\n", table->nbr_philo);
 	table->time_to_die = ft_atoi(argv[2]);
 	table->time_to_eat = ft_atoi(argv[3]);
 	table->time_to_sleep = ft_atoi(argv[4]);

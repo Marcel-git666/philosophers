@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/06 08:30:03 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/06 08:49:57 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,7 @@
 # define DEATH_SEM "/death_sem"
 # define ALL_FULL_SEM "/all_full_sem"
 
-typedef struct s_table t_table;
-
+typedef struct s_table	t_table;
 
 typedef struct s_philo
 {

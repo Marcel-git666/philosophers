@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/03 15:12:23 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/05 22:22:14 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ long	get_time(t_time_code time_code)
 	else if (time_code == MILLISECONDS)
 		return (tv.tv_sec * 1000 + tv.tv_usec / 1e3);
 	else if (time_code == MICROSECONDS)
-		return (tv.tv_sec * 1e6 + tv.tv_sec);
+		return (tv.tv_sec * 1e6 + tv.tv_usec);
 	else
 		error_exit("Wrong input for gettime.");
 	return (-1);

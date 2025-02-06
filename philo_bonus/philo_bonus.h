@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:52:11 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/04 08:58:47 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/06 08:30:03 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
 			t_opcode opcode);
 void	dinner_start(t_table *table);
 void	precise_usleep(long usec, t_table *table);
-
+void	eat(t_philo *philo);
 bool	simulation_finished(t_table *table);
 void	write_status(t_philo_status status, t_philo *philo, bool debug);
 void	monitor_dinner(void *data);

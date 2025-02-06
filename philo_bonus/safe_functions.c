@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:55:05 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/17 12:45:42 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/06 08:31:25 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,14 @@ sem_t	*safe_semaphore_handle(const char *name, int initial_value,
 				error_exit("Semaphore open error");
 			}
 		}
-		// ft_printf("Opened named semaphore: %s\n", name);
 	}
 	else if (opcode == SEM_WAIT)
 	{
-		// ft_printf("Process %d waiting on semaphore: %s\n", getpid(), name ? name : "Unnamed");
 		if (sem_wait(sem) == -1)
 			error_exit("Semaphore wait error");
 	}
 	else if (opcode == SEM_POST)
 	{
-		// ft_printf("Process %d posting to semaphore: %s\n", getpid(), name ? name : "Unnamed");
 		if (sem_post(sem) == -1)
 			error_exit("Semaphore post error");
 	}

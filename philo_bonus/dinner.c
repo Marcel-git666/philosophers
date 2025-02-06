@@ -6,34 +6,44 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:23:27 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/05 22:14:16 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/06 08:29:05 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void	eat(t_philo *philo)
+static void	init_philo(t_philo *philo, pthread_t *monitor_tid)
 {
-	// Wait for two forks (semaphores)
-	safe_semaphore_handle(FORKS_SEM, 0, SEM_WAIT, philo->table->forks);
-	safe_semaphore_handle(FORKS_SEM, 0, SEM_WAIT, philo->table->forks);
-	write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
-	write_status(TAKE_SECOND_FORK, philo, DEBUG_MODE);
-
-	// Update meal count and last meal time
-	safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, philo->table->write_sem);
+	safe_thread_handle(monitor_tid, monitor_thread, philo, CREATE);
+	safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->start_sem);
+	safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->write_sem);
 	philo->last_meal_time = get_time(MILLISECONDS);
-	philo->meals_counter++;
-	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
-
-	write_status(EATING, philo, DEBUG_MODE);
-	usleep(philo->table->time_to_eat * 1000);
-
-	// Release the forks (semaphores)
-	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
-	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
+	safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->write_sem);
 }
 
+static bool	check_meal_limit(t_philo *philo)
+{
+	safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, philo->table->write_sem);
+	if (philo->table->nbr_limit_meals > 0
+		&& philo->meals_counter >= philo->table->nbr_limit_meals)
+	{
+		safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
+		return (true);
+	}
+	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
+	return (false);
+}
+
+static void	cleanup_and_exit(t_philo *philo, pthread_t *monitor_tid)
+{
+	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
+	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
+	safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, philo->table->write_sem);
+	ft_printf("[DEBUG] Join monitor thread.\n");
+	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
+	safe_thread_handle(monitor_tid, NULL, NULL, JOIN);
+	exit(0);
+}
 
 void	dinner_simulation(void *data)
 {
@@ -41,34 +51,19 @@ void	dinner_simulation(void *data)
 	pthread_t	monitor_tid;
 
 	philo = (t_philo *)data;
-	safe_thread_handle(&monitor_tid, monitor_thread, philo, CREATE);
-	safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->start_sem);
-	safe_semaphore_handle(NULL, 0, SEM_WAIT, philo->table->write_sem);
-	philo->last_meal_time = get_time(MILLISECONDS);
-	safe_semaphore_handle(NULL, 0, SEM_POST, philo->table->write_sem);
-
+	init_philo(philo, &monitor_tid);
 	while (true)
 	{
 		eat(philo);
-		safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, philo->table->write_sem);
-		if (philo->table->nbr_limit_meals > 0 && philo->meals_counter >= philo->table->nbr_limit_meals)
-		{
-			safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
-			break;
-		}
-		safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
+		if (check_meal_limit(philo))
+			break ;
 		write_status(SLEEPING, philo, DEBUG_MODE);
 		usleep(philo->table->time_to_sleep * 1000);
 		write_status(THINKING, philo, DEBUG_MODE);
 	}
-	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
-	safe_semaphore_handle(FORKS_SEM, 0, SEM_POST, philo->table->forks);
-	safe_semaphore_handle(WRITE_SEM, 0, SEM_WAIT, philo->table->write_sem);
-	ft_printf("[DEBUG] Join monitor thread.\n");
-	safe_semaphore_handle(WRITE_SEM, 0, SEM_POST, philo->table->write_sem);
-	safe_thread_handle(&monitor_tid, NULL, NULL, JOIN);
-	exit (0);
+	cleanup_and_exit(philo, &monitor_tid);
 }
+
 
 void	dinner_start(t_table *table)
 {

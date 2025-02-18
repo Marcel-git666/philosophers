@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2025/01/30 12:38:49 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/18 16:34:34 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	clean(t_table *table)
 {
-	 t_philo	*philo;
-	int			i;
+	t_philo	*philo;
+	int		i;
 
 	i = -1;
 	while (++i < table->nbr_philo)
@@ -44,7 +44,6 @@ void	error_exit(const char *error)
 	write(2, "Error\n", 6);
 	write(2, error, ft_strlen(error));
 	write(2, "\n", 1);
-	// exit(EXIT_FAILURE);
 }
 
 long	get_time(t_time_code time_code)
@@ -81,7 +80,5 @@ void	precise_usleep(long usec, t_table *table)
 			usleep(remaining / 2);
 		else
 			usleep(50);
-			// while (get_time(MICROSECONDS) - start < usec)
-			// 	;
 	}
 }

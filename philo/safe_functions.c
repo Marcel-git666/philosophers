@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 20:55:05 by mmravec           #+#    #+#             */
-/*   Updated: 2024/12/05 12:09:39 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/18 16:36:26 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ static void	handle_mutex_error(int status)
 			" memory to create another mutex.");
 	else if (status == EBUSY)
 		error_exit("Mutex is locked.");
-
 }
 
 void	safe_mutex_handle(t_mtx *mutex, t_opcode opcode)

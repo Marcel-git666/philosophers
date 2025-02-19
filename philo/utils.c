@@ -6,7 +6,7 @@
 /*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:25:28 by mmravec           #+#    #+#             */
-/*   Updated: 2025/02/18 16:34:34 by mmravec          ###   ########.fr       */
+/*   Updated: 2025/02/19 12:20:59 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	precise_usleep(long usec, t_table *table)
 	start = get_time(MICROSECONDS);
 	while (get_time(MICROSECONDS) - start < usec)
 	{
-		if (table->is_finished)
+		if (simulation_finished(table))
 			break ;
 		elapsed = get_time(MICROSECONDS) - start;
 		remaining = usec - elapsed;

@@ -6,14 +6,13 @@
 #    By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/03 16:05:35 by mmravec           #+#    #+#              #
-#    Updated: 2025/02/02 15:13:31 by mmravec          ###   ########.fr        #
+#    Updated: 2025/02/19 12:16:08 by mmravec          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g -pthread
-# -fsanitize=thread
+CFLAGS = -Wall -Werror -Wextra -g -pthread -fsanitize=thread
 
 # Source files
 SRCS = main.c utils.c parse.c init.c safe_functions.c dinner.c write.c \
